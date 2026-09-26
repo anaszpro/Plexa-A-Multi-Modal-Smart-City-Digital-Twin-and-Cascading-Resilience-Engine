@@ -1,0 +1,7 @@
+data/raw/
+data/processed/
+anaconda_projects/
+__pycache__/
+.env
+.ipynb_checkpoints/
+.DS_Store
