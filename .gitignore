@@ -1,5 +1,4 @@
-data/raw/
-data/processed/
+data/
 anaconda_projects/
 __pycache__/
 .env
