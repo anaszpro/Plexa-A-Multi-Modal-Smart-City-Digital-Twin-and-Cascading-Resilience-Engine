@@ -29,3 +29,5 @@ guidance ({guidance_source, score} or null), status ("unverified").
 Weak transfer across datasets; many false alarms at high recall; reports are not verified;
 guidance covers flooding only; text locations are mostly area-level; 311 flood rules (Sewer Backup)
 are only ~66% confirmed in a small manual check.
+
+Tested with Python 3.11.9.
