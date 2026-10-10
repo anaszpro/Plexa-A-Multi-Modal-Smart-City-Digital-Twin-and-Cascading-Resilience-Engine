@@ -6,7 +6,7 @@ Baseline Safety & Governance pipeline: citizen report -> incident node (or disca
 1. Create the model file by running the last cell of `notebooks/13_embeddings_vs_tfidf.ipynb`
    (writes `notebooks/data/models/safety_combined_v1.joblib`; git-ignored, contains tweet vocabulary).
 2. Save the guidance pages as `.txt` in `notebooks/data/raw/protocols/` (see notebook 12; git-ignored, City content).
-3. `pip install scikit-learn sentence-transformers spacy joblib pandas scipy numpy`
+3. `pip install -r safety_governance/requirements.txt`
    and `python -m spacy download en_core_web_sm`
 4. Use the same scikit-learn version that saved the model (a different version can break loading).
 

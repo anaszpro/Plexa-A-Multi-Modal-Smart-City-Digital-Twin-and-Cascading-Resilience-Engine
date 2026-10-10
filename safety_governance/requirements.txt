@@ -1,0 +1,11 @@
+# Tested with these versions (pip freeze from the author's environment).
+# The saved model file (safety_combined_v1.joblib) needs the same scikit-learn version.
+joblib==1.6.0
+numpy==2.4.6
+pandas==3.0.6
+scikit-learn==1.9.1
+scipy==1.17.1
+sentence-transformers==6.1.0
+spacy==3.8.16
+# spaCy English model:
+en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
