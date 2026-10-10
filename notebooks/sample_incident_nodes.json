@@ -6,13 +6,16 @@
     "timestamp": "2021-09-01 11:25:00",
     "hazard_type": "flood",
     "severity": "medium",
-    "confidence": 1.0,
+    "confidence": 0.9,
     "location_text": null,
     "borough": "Staten Island",
     "lat": 40.561180032249545,
     "lon": -74.15583856604565,
-    "protocol": "SOP-FLOOD-01 (placeholder): dispatch DEP crew, close affected road segment",
-    "verified_by_rag": false
+    "guidance": {
+      "guidance_source": "nycem_flooding.txt#passage-12",
+      "score": 0.629
+    },
+    "status": "unverified"
   },
   {
     "incident_id": "INC-C708E6E1",
@@ -21,13 +24,13 @@
     "timestamp": "2021-09-01 10:27:34",
     "hazard_type": "road_blockage",
     "severity": "medium",
-    "confidence": 1.0,
+    "confidence": 0.9,
     "location_text": "314 TRAVIS AVENUE",
     "borough": "Staten Island",
     "lat": 40.58767974707091,
     "lon": -74.15280046793022,
-    "protocol": "SOP-BLOCK-01 (placeholder): notify DOT, reroute emergency vehicles",
-    "verified_by_rag": false
+    "guidance": null,
+    "status": "unverified"
   },
   {
     "incident_id": "INC-5CE8B7D0",
@@ -36,13 +39,13 @@
     "timestamp": "2021-09-02 13:24:52",
     "hazard_type": "road_blockage",
     "severity": "medium",
-    "confidence": 1.0,
+    "confidence": 0.9,
     "location_text": "1360 HICKS STREET",
     "borough": "Bronx",
     "lat": 40.87799436804969,
     "lon": -73.8506908827117,
-    "protocol": "SOP-BLOCK-01 (placeholder): notify DOT, reroute emergency vehicles",
-    "verified_by_rag": false
+    "guidance": null,
+    "status": "unverified"
   },
   {
     "incident_id": "INC-9C80DAEB",
@@ -51,13 +54,16 @@
     "timestamp": "2021-09-02 08:16:00",
     "hazard_type": "flood",
     "severity": "medium",
-    "confidence": 1.0,
+    "confidence": 0.7,
     "location_text": "735 EAST   81 STREET",
     "borough": "Brooklyn",
     "lat": 40.63684213969132,
     "lon": -73.91342617261739,
-    "protocol": "SOP-FLOOD-01 (placeholder): dispatch DEP crew, close affected road segment",
-    "verified_by_rag": false
+    "guidance": {
+      "guidance_source": "nycem_flooding.txt#passage-12",
+      "score": 0.629
+    },
+    "status": "unverified"
   },
   {
     "incident_id": "INC-21C915D7",
@@ -66,13 +72,13 @@
     "timestamp": "2021-09-02 12:15:08",
     "hazard_type": "road_blockage",
     "severity": "medium",
-    "confidence": 1.0,
+    "confidence": 0.9,
     "location_text": "780 ELSMERE PLACE",
     "borough": "Bronx",
     "lat": 40.84342952060921,
     "lon": -73.88888053732545,
-    "protocol": "SOP-BLOCK-01 (placeholder): notify DOT, reroute emergency vehicles",
-    "verified_by_rag": false
+    "guidance": null,
+    "status": "unverified"
   },
   {
     "incident_id": "INC-19C98518",
@@ -86,8 +92,8 @@
     "borough": "Queens",
     "lat": null,
     "lon": null,
-    "protocol": "SOP-BLOCK-01 (placeholder): notify DOT, reroute emergency vehicles",
-    "verified_by_rag": false
+    "guidance": null,
+    "status": "unverified"
   },
   {
     "incident_id": "INC-86D6D8BB",
@@ -101,8 +107,11 @@
     "borough": null,
     "lat": null,
     "lon": null,
-    "protocol": "SOP-FLOOD-01 (placeholder): dispatch DEP crew, close affected road segment",
-    "verified_by_rag": false
+    "guidance": {
+      "guidance_source": "nycem_flooding.txt#passage-34",
+      "score": 0.593
+    },
+    "status": "unverified"
   },
   {
     "incident_id": "INC-0F22A28C",
@@ -116,8 +125,8 @@
     "borough": null,
     "lat": null,
     "lon": null,
-    "protocol": "SOP-FLOOD-01 (placeholder): dispatch DEP crew, close affected road segment",
-    "verified_by_rag": false
+    "guidance": null,
+    "status": "unverified"
   },
   {
     "incident_id": "INC-553BF577",
@@ -127,11 +136,11 @@
     "hazard_type": "power_outage",
     "severity": "medium",
     "confidence": 0.59,
-    "location_text": "Atlantic Ave",
+    "location_text": "Atlantic Ave, Brooklyn",
     "borough": "Brooklyn",
     "lat": null,
     "lon": null,
-    "protocol": "SOP-POWER-01 (placeholder): notify utility, flag dependent traffic signals",
-    "verified_by_rag": false
+    "guidance": null,
+    "status": "unverified"
   }
 ]
