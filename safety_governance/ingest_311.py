@@ -16,8 +16,6 @@ import argparse
 import json
 import os
 import sqlite3
-import urllib.parse
-import urllib.request
 from datetime import datetime, timezone
 
 from .pipeline import DATA_DIR, SafetyGovernancePipeline
@@ -53,14 +51,17 @@ CREATE INDEX IF NOT EXISTS idx_incidents_time ON incidents(reported_at);
 
 
 def fetch_page(where, offset, page):
+    import requests   # same library the notebooks use (it ships its own certificate bundle)
+
     params = {"$select": COLUMNS, "$where": where, "$order": "unique_key",
               "$limit": page, "$offset": offset}
-    req = urllib.request.Request(API + "?" + urllib.parse.urlencode(params))
+    headers = {}
     token = os.environ.get("SOCRATA_APP_TOKEN")
     if token:
-        req.add_header("X-App-Token", token)
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return json.loads(r.read().decode("utf-8"))
+        headers["X-App-Token"] = token
+    r = requests.get(API, params=params, headers=headers, timeout=60)
+    r.raise_for_status()
+    return r.json()
 
 
 def fetch_all(start, end, max_rows=200000, page=10000):

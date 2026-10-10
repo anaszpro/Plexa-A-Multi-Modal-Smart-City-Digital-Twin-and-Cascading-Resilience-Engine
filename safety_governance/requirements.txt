@@ -11,3 +11,4 @@ spacy==3.8.16
 en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
 torch==2.14.1
 transformers==5.19.0
+requests==2.34.2
