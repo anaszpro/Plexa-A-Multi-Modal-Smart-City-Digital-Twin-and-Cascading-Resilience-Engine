@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "target": "reported_street_or_highway_flooding",
+  "description": "Explicit street or highway flooding reports from NYC 311. These are reported impacts, not independently verified physical flood observations.",
+  "positive_report_rules": [
+    {
+      "complaint_type": "Sewer",
+      "descriptor": "Street Flooding (SJ)"
+    },
+    {
+      "complaint_type": "Sewer",
+      "descriptor": "Highway Flooding (SH)"
+    },
+    {
+      "complaint_type": "Sewer Maintenance",
+      "descriptor": "Flooding on Street"
+    },
+    {
+      "complaint_type": "Sewer Maintenance",
+      "descriptor": "Flooding on Highway"
+    }
+  ],
+  "unresolved_timestamp_policy": "Preserve in the review table; do not assign an hourly positive label. Account for affected time uncertainty before constructing negative labels.",
+  "other_descriptor_policy": "Retain in raw storage. Exclusion from the positive rules does not establish absence of flooding.",
+  "prediction_horizon_hours": null,
+  "negative_label_definition": null
+}
