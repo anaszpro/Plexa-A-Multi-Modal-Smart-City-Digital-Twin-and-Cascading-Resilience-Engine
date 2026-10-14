@@ -1,115 +1,459 @@
 """
-Fetch historical MRMS radar data from the IEM archives, process to Parquet, and delete raw files.
+Download and process historical MRMS hourly rainfall for NYC.
 
-Usage:
-    python scripts/fetch_historical_radar.py --start YYYY-MM-DD --end YYYY-MM-DD
+The output keeps every cell in the NYC bounding box:
+- Positive values represent observed rainfall.
+- Zero represents an observed dry cell.
+- Missing or invalid values become NaN with is_missing=True.
+- All timestamps use UTC.
+
+Test using existing local files:
+    python scripts/fetch_historical_radar.py \
+        --local-dir data/raw/radar_ida \
+        --output-dir data/processed/radar_validation
+
+Download a historical period:
+    python scripts/fetch_historical_radar.py \
+        --start 2021-09-01 \
+        --end 2021-09-03
+
+The end date is exclusive. New downloads default to radar_parquet_v2,
+keeping them separate from the previous rainfall archive.
 """
-import os
-import sys
-import gzip
-import shutil
-import requests
+
 import argparse
-import xarray as xr
-import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
+import gzip
+import hashlib
+import re
+import shutil
+import tempfile
+import time
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
+import requests
+import xarray as xr
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
 NYC_LAT = (40.49, 40.92)
-NYC_LON = (-74.27, -73.68)
-LON_MIN, LON_MAX = (lon % 360 for lon in NYC_LON)
+NYC_LON = (-74.27 % 360, -73.68 % 360)
 
-def fetch_and_process(start_date, end_date):
-    current_time = start_date
-    out_dir = Path("data/raw/radar_parquet")
-    out_dir.mkdir(parents=True, exist_ok=True)
-    
-    temp_dir = Path("data/raw/temp_radar")
-    temp_dir.mkdir(parents=True, exist_ok=True)
+PRODUCT = "MultiSensor_QPE_01H_Pass2"
 
-    while current_time < end_date:
-        ts_str = current_time.strftime('%Y%m%d_%H%M%S')
-        out_file = out_dir / f"radar_{ts_str}.parquet"
-        
-        if out_file.exists():
-            print(f"Skipping {ts_str} - already processed")
-            current_time += timedelta(hours=1)
-            continue
-            
-        yyyy = current_time.strftime('%Y')
-        mm = current_time.strftime('%m')
-        dd = current_time.strftime('%d')
-        file_ts = current_time.strftime('%Y%m%d-%H0000')
-        
-        # Check both the primary and historical deep-archive servers
-        base_urls = [
-            f"https://mtarchive.geol.iastate.edu/{yyyy}/{mm}/{dd}/mrms/ncep/MultiSensor_QPE_01H_Pass2",
-            f"https://mesonet.agron.iastate.edu/archive/data/{yyyy}/{mm}/{dd}/mrms/ncep/MultiSensor_QPE_01H_Pass2"
-        ]
-        
-        filename_gz = f"MultiSensor_QPE_01H_Pass2_00.00_{file_ts}.grib2.gz"
-        gz_path = temp_dir / filename_gz
-        grib_path = temp_dir / filename_gz.replace('.gz', '')
-        
-        success = False
-        last_url_tried = ""
-        
-        for base_url in base_urls:
-            url = f"{base_url}/{filename_gz}"
-            last_url_tried = url
+NAME_PATTERN = re.compile(
+    r"MultiSensor_QPE_01H_Pass2_00\.00_(\d{8}-\d{6})\.grib2$"
+)
+
+COLUMNS = [
+    "ts_utc",
+    "cell_id",
+    "latitude",
+    "longitude",
+    "rain_mm",
+    "is_missing",
+    "grid_id",
+]
+
+
+def timestamp_from_name(path):
+    """Read the UTC observation time from a radar filename."""
+    match = NAME_PATTERN.fullmatch(path.name)
+
+    if match is None:
+        raise ValueError(f"Unexpected product filename: {path.name}")
+
+    return datetime.strptime(
+        match.group(1), "%Y%m%d-%H%M%S"
+    ).replace(tzinfo=timezone.utc)
+
+
+def load_crop(path):
+    """Open a radar file, verify its time, and extract the NYC grid."""
+    expected_time = timestamp_from_name(path)
+
+    with xr.open_dataset(
+        path,
+        engine="cfgrib",
+        backend_kwargs={"indexpath": ""},
+    ) as dataset:
+        if len(dataset.data_vars) != 1:
+            raise ValueError(
+                f"Expected one rainfall variable: {path.name}"
+            )
+
+        valid_time = pd.Timestamp(
+            dataset.valid_time.values
+        ).tz_localize("UTC")
+
+        if valid_time != expected_time:
+            raise ValueError(
+                f"Filename/GRIB time mismatch: "
+                f"{path.name}: {valid_time}"
+            )
+
+        variable = next(iter(dataset.data_vars))
+
+        rain = (
+            dataset[variable]
+            .sortby("latitude")
+            .sortby("longitude")
+        )
+
+        crop = rain.sel(
+            latitude=slice(*NYC_LAT),
+            longitude=slice(*NYC_LON),
+        )
+
+        crop = crop.transpose("latitude", "longitude").load()
+
+    if not crop.size:
+        raise ValueError(f"Empty NYC crop: {path.name}")
+
+    return crop, expected_time
+
+
+def make_frame(values, timestamp, lats, lons, grid_id):
+    """Create one row per cell, preserving observed zero rainfall."""
+    values = np.asarray(values, dtype=np.float64).ravel()
+
+    missing = ~np.isfinite(values) | (values < 0)
+
+    lon_grid, lat_grid = np.meshgrid(lons - 360, lats)
+
+    return pd.DataFrame({
+        "ts_utc": pd.DatetimeIndex(
+            [timestamp] * values.size,
+            tz="UTC",
+        ),
+        "cell_id": np.arange(values.size, dtype=np.int32),
+        "latitude": lat_grid.ravel(),
+        "longitude": lon_grid.ravel(),
+        "rain_mm": np.where(missing, np.nan, values),
+        "is_missing": missing,
+        "grid_id": grid_id,
+    })
+
+
+def validate_frame(frame, timestamp, lats, lons, grid_id):
+    """Check output structure, timestamps, coordinates, and rainfall."""
+    expected_cells = len(lats) * len(lons)
+
+    if list(frame.columns) != COLUMNS:
+        raise ValueError(
+            "Wrong output schema; legacy files cannot be skipped"
+        )
+
+    if len(frame) != expected_cells:
+        raise ValueError("Output does not contain the complete grid")
+
+    if str(frame.ts_utc.dt.tz) != "UTC":
+        raise ValueError("Output timestamps must use UTC")
+
+    if not frame.ts_utc.eq(timestamp).all():
+        raise ValueError("Output timestamps do not match the requested hour")
+
+    if not np.array_equal(
+        frame.cell_id.to_numpy(),
+        np.arange(expected_cells),
+    ):
+        raise ValueError("Cell IDs must be ordered, unique and complete")
+
+    lon_grid, lat_grid = np.meshgrid(lons - 360, lats)
+
+    if not np.array_equal(
+        frame.latitude.to_numpy(),
+        lat_grid.ravel(),
+    ):
+        raise ValueError("Latitude grid differs from reference")
+
+    if not np.array_equal(
+        frame.longitude.to_numpy(),
+        lon_grid.ravel(),
+    ):
+        raise ValueError("Longitude grid differs from reference")
+
+    if not frame.grid_id.eq(grid_id).all():
+        raise ValueError("Grid fingerprint differs from reference")
+
+    if frame.is_missing.dtype != bool:
+        raise ValueError("is_missing must contain Boolean values")
+
+    if not frame.rain_mm.isna().eq(frame.is_missing).all():
+        raise ValueError("Missing flags and rainfall nulls must agree")
+
+    valid_rain = frame.loc[~frame.is_missing, "rain_mm"]
+
+    if not np.isfinite(valid_rain).all() or (valid_rain < 0).any():
+        raise ValueError(
+            "Observed rainfall must be finite and nonnegative"
+        )
+
+
+def atomic_write(frame, target):
+    """Publish the output only after the Parquet write finishes."""
+    with tempfile.NamedTemporaryFile(
+        dir=target.parent,
+        suffix=".parquet",
+        delete=False,
+    ) as temporary_file:
+        temporary_path = Path(temporary_file.name)
+
+    try:
+        frame.to_parquet(temporary_path, index=False)
+        temporary_path.replace(target)
+    finally:
+        temporary_path.unlink(missing_ok=True)
+
+
+def download_hour(session, timestamp, directory):
+    """Try both archive servers, retrying temporary failures."""
+    name = (
+        f"{PRODUCT}_00.00_"
+        f"{timestamp:%Y%m%d-%H%M%S}.grib2"
+    )
+
+    target = directory / name
+
+    archive_paths = [
+        (
+            "https://mtarchive.geol.iastate.edu/"
+            f"{timestamp:%Y/%m/%d}/mrms/ncep/{PRODUCT}"
+        ),
+        (
+            "https://mesonet.agron.iastate.edu/archive/data/"
+            f"{timestamp:%Y/%m/%d}/mrms/ncep/{PRODUCT}"
+        ),
+    ]
+
+    errors = []
+
+    for archive in archive_paths:
+        for attempt in range(3):
             try:
-                resp = requests.get(url, stream=True, timeout=30)
-                if resp.status_code == 200:
-                    with open(gz_path, 'wb') as f:
-                        shutil.copyfileobj(resp.raw, f)
-                    success = True
-                    break
-            except requests.exceptions.RequestException:
-                pass
-                
-        if not success:
-            print(f"Missing data for {ts_str}. Last URL checked: {last_url_tried}")
-            current_time += timedelta(hours=1)
-            continue
-            
-        try:
-            # Decompress
-            with gzip.open(gz_path, 'rb') as f_in:
-                with open(grib_path, 'wb') as f_out:
-                    shutil.copyfileobj(f_in, f_out)
-                    
-            # Process
-            ds = xr.open_dataset(grib_path, engine="cfgrib", backend_kwargs={"indexpath": ""})
-            rain = ds[list(ds.data_vars)[0]].sortby("latitude")
-            cropped = rain.sel(latitude=slice(*NYC_LAT), longitude=slice(LON_MIN, LON_MAX)).load()
-            ds.close()
-            
-            values = cropped.values.ravel().astype(float)
-            df = pd.DataFrame({
-                "ts_utc": current_time,
-                "cell_id": np.arange(len(values)),
-                "rain_mm": values
-            })
-            
-            df = df[df["rain_mm"] > 0]
-            df.to_parquet(out_file, index=False)
-            print(f"Processed {ts_str} -> {len(df)} raining cells")
-            
-        except Exception as e:
-            print(f"FAILED {ts_str} processing: {e}")
-        finally:
-            if gz_path.exists(): gz_path.unlink()
-            if grib_path.exists(): grib_path.unlink()
-            
-        current_time += timedelta(hours=1)
+                with session.get(
+                    f"{archive}/{name}.gz",
+                    stream=True,
+                    timeout=(15, 120),
+                ) as response:
+                    if response.status_code == 404:
+                        errors.append(f"{archive}: 404")
+                        break
+
+                    response.raise_for_status()
+
+                    with gzip.GzipFile(
+                        fileobj=response.raw
+                    ) as source, target.open("wb") as destination:
+                        shutil.copyfileobj(source, destination)
+
+                return target
+
+            except (
+                requests.RequestException,
+                OSError,
+                EOFError,
+            ) as error:
+                errors.append(
+                    f"{archive}: {type(error).__name__}: {error}"
+                )
+
+                target.unlink(missing_ok=True)
+
+                if attempt < 2:
+                    time.sleep(2 ** attempt)
+
+    raise RuntimeError("Download failed: " + " | ".join(errors))
+
+
+def run(args):
+    """Process local files or download the requested hourly period."""
+    reference, _ = load_crop(args.reference_grid)
+
+    lats = reference.latitude.values
+    lons = reference.longitude.values
+
+    coordinates = (
+        np.concatenate([lats, lons])
+        .astype("<f8")
+        .tobytes()
+    )
+
+    grid_id = hashlib.sha256(coordinates).hexdigest()
+
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+
+    if args.local_dir is not None:
+        files = sorted(
+            args.local_dir.glob(f"{PRODUCT}_*.grib2")
+        )
+
+        if not files:
+            raise ValueError(
+                f"No local GRIB2 files in {args.local_dir}"
+            )
+
+        jobs = [
+            (timestamp_from_name(path), path)
+            for path in files
+        ]
+
+    else:
+        start = datetime.strptime(
+            args.start, "%Y-%m-%d"
+        ).replace(tzinfo=timezone.utc)
+
+        end = datetime.strptime(
+            args.end, "%Y-%m-%d"
+        ).replace(tzinfo=timezone.utc)
+
+        if start >= end:
+            raise ValueError(
+                "Start must be earlier than the exclusive end date"
+            )
+
+        total_hours = (end - start).days * 24
+
+        jobs = [
+            (start + timedelta(hours=hour), None)
+            for hour in range(total_hours)
+        ]
+
+    written = 0
+    skipped = 0
+    failed = 0
+
+    with requests.Session() as session:
+        for timestamp, local_path in jobs:
+            target = args.output_dir / (
+                f"radar_{timestamp:%Y%m%d_%H%M%S}.parquet"
+            )
+
+            try:
+                if target.exists() and not args.overwrite:
+                    existing = pd.read_parquet(target)
+
+                    validate_frame(
+                        existing, timestamp, lats, lons, grid_id
+                    )
+
+                    skipped += 1
+                    print(f"SKIP validated {target.name}")
+                    continue
+
+                with tempfile.TemporaryDirectory(
+                    prefix="plexa-radar-"
+                ) as temporary_directory:
+                    source = local_path or download_hour(
+                        session,
+                        timestamp,
+                        Path(temporary_directory),
+                    )
+
+                    crop, _ = load_crop(source)
+
+                    same_latitudes = np.array_equal(
+                        crop.latitude.values, lats
+                    )
+
+                    same_longitudes = np.array_equal(
+                        crop.longitude.values, lons
+                    )
+
+                    if not same_latitudes or not same_longitudes:
+                        raise ValueError(
+                            "Source grid differs from reference; "
+                            "cell IDs would change"
+                        )
+
+                    frame = make_frame(
+                        crop.values,
+                        timestamp,
+                        lats,
+                        lons,
+                        grid_id,
+                    )
+
+                    validate_frame(
+                        frame, timestamp, lats, lons, grid_id
+                    )
+
+                    atomic_write(frame, target)
+
+                written += 1
+
+                print(
+                    f"WRITE {target.name}: "
+                    f"cells={len(frame)}, "
+                    f"dry={frame.rain_mm.eq(0).sum()}, "
+                    f"missing={frame.is_missing.sum()}"
+                )
+
+            except Exception as error:
+                failed += 1
+                print(f"FAIL {timestamp.isoformat()}: {error}")
+
+    print(
+        f"Summary: written={written}, "
+        f"validated_skips={skipped}, "
+        f"failed={failed}"
+    )
+
+    return 1 if failed else 0
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+
+    parser.add_argument("--local-dir", type=Path)
+    parser.add_argument("--start", help="UTC date, YYYY-MM-DD")
+    parser.add_argument(
+        "--end",
+        help="Exclusive UTC date, YYYY-MM-DD",
+    )
+
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=ROOT / "data/raw/radar_parquet_v2",
+    )
+
+    parser.add_argument(
+        "--reference-grid",
+        type=Path,
+        default=(
+            ROOT
+            / "data/raw/radar_ida"
+            / "MultiSensor_QPE_01H_Pass2_00.00_20210902-000000.grib2"
+        ),
+    )
+
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Replace existing outputs explicitly",
+    )
+
+    args = parser.parse_args()
+
+    if args.local_dir is not None:
+        if args.start or args.end:
+            parser.error(
+                "Use --local-dir OR --start/--end, not both"
+            )
+    elif not args.start or not args.end:
+        parser.error(
+            "Provide --local-dir or both --start and --end"
+        )
+
+    try:
+        return run(args)
+    except (ValueError, OSError) as error:
+        parser.exit(1, f"Error: {error}\n")
+
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--start", required=True, help="YYYY-MM-DD")
-    parser.add_argument("--end", required=True, help="YYYY-MM-DD (exclusive)")
-    args = parser.parse_args()
-    
-    start = datetime.strptime(args.start, "%Y-%m-%d")
-    end = datetime.strptime(args.end, "%Y-%m-%d")
-    fetch_and_process(start, end)
+    raise SystemExit(main())
