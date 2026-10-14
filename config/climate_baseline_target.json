@@ -1,0 +1,64 @@
+{
+  "version": "1.0",
+  "target": "reported_street_or_highway_flooding_next_hour",
+  "description": "Predict whether a physical street segment receives at least one qualifying NYC 311 flooding report during the next hour. This is a report-occurrence target, not verified physical flooding.",
+  "positive_rules": {
+    "path": "config/climate_label_rules.json",
+    "version": "1.0",
+    "sha256": "b476bba99858ce645801a628e4c9d7e81f8c2dc5e91554630718c0549499b789"
+  },
+  "row_definition": {
+    "entity": "street_segment_id",
+    "prediction_time_column": "prediction_time_utc",
+    "unique_key": [
+      "street_segment_id",
+      "prediction_time_utc"
+    ],
+    "timezone": "UTC",
+    "frequency": "hourly",
+    "prediction_horizon_hours": 1,
+    "target_interval": "[prediction_time_utc, prediction_time_utc + 1 hour)"
+  },
+  "positive_label": {
+    "value": 1,
+    "minimum_uniquely_mapped_reports": 1,
+    "report_time_column": "created_at",
+    "deduplicate_reports_by": "unique_key",
+    "multiple_reports_in_same_segment_hour": "One positive label; retain the report count separately."
+  },
+  "negative_label": {
+    "value": 0,
+    "meaning": "No qualifying report observed; not confirmed absence of flooding.",
+    "requires": [
+      "Verified source ingestion coverage for the complete target hour and both complaint categories.",
+      "No qualifying report uniquely mapped to this segment during the target hour.",
+      "No unresolved report that could belong to this segment and target hour."
+    ]
+  },
+  "unknown_label": {
+    "value": null,
+    "training_policy": "Exclude rows with unknown labels.",
+    "ambiguous_segment": "For the report's target hour, block zero labels on every candidate physical segment.",
+    "missing_or_invalid_coordinates": "For the report's target hour, conservatively block zero labels across all segments.",
+    "outside_match_distance": "For the report's target hour, conservatively block zero labels across all segments.",
+    "unresolved_local_timestamp": "Conservatively block zero labels across all segments for every target hour overlapping the report's local calendar date in America/New_York.",
+    "unverified_ingestion_coverage": "Block zero labels for affected target hours.",
+    "positive_precedence": "A uniquely mapped qualifying report establishes label 1 even when another report is unresolved."
+  },
+  "feature_policy": {
+    "historical_window": "[prediction_time_utc - lookback, prediction_time_utc)",
+    "availability": "Every feature must have been available by prediction_time_utc.",
+    "rainfall": "Use only rainfall accumulation intervals ending by prediction_time_utc and available by that time.",
+    "missing_rainfall": "Never replace missing rainfall with zero.",
+    "incomplete_required_features": "Exclude the training row and record the exclusion reason.",
+    "complaint_information": "Do not use target-hour complaints or later complaint updates as input features.",
+    "historical_availability": "If historical publication times cannot be verified, document the availability assumption and describe evaluation as retrospective."
+  },
+  "evaluation_policy": {
+    "split_method": "Chronological with storm-event boundary checks.",
+    "random_row_split_allowed": false,
+    "fit_preprocessing_on": "Training data only.",
+    "validation_and_test_sampling": "Preserve the natural label distribution within the eligible evaluation population.",
+    "report_exclusions": "Report excluded hours and segments alongside model metrics."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "snapshot_start_utc": "2020-10-14T04:00:00Z",
+  "snapshot_end_utc_exclusive": "2026-10-07T04:00:00Z",
+  "rainfall_product": "MultiSensor_QPE_01H_Pass2",
+  "rainfall_availability_lag_hours": 3,
+  "rainfall_lag_reason": "Historical Pass 2 nominal latency was 120 minutes; use 3 hours including processing margin. Actual historic arrival times are unavailable; evaluation remains retrospective.",
+  "rainfall_latency_source": "https://www.nco.ncep.noaa.gov/pmb/changes/MRMS_SCN_v12.0_Upgrade_Supplemental.pdf",
+  "rainfall_windows_hours": [1, 3, 6, 24],
+  "splits": {
+    "train": ["2020-10-14T04:00:00Z", "2024-12-25T05:00:00Z"],
+    "validation": ["2025-01-01T05:00:00Z", "2025-12-25T05:00:00Z"],
+    "test": ["2026-01-01T05:00:00Z", "2026-10-07T04:00:00Z"]
+  },
+  "split_boundary_policy": "Seven-day gaps separate splits; additionally inspect rainfall events crossing each gap before freezing evaluation.",
+  "training_negative_keep_fraction": 0.0002,
+  "training_sampling_seed": "plexa-baseline-v1",
+  "training_sampling_policy": "Retain all eligible positives; deterministically sample negatives and store inverse inclusion weights. Never apply this sampling to validation or test.",
+  "features": ["elevation_mean_m", "terrain_endpoint_grade_abs", "terrain_relief_m", "length_m", "rain_1h_mm", "rain_3h_mm", "rain_6h_mm", "rain_24h_mm"],
+  "evaluation_storage": "Keep normalized street, rainfall, and sparse label tables; stream complete eligible validation/test rows by day instead of materializing billions of rows.",
+  "training_authorized": false
+}
