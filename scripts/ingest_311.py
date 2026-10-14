@@ -1,4 +1,4 @@
-"""Collect NYC 311 Sewer complaints and preserve unresolved local times.
+"""Collect NYC 311 sewer-related complaints and preserve unresolved local times.
 
 Dates use New York local time; --end is exclusive. Apply migrations 001
 and 002 first. Normal and time-review records are saved in one transaction.
@@ -27,6 +27,7 @@ URL = f"https://data.cityofnewyork.us/resource/{DATASET}.json"
 NY_TZ = "America/New_York"
 PAGE_SIZE = 5000
 DEFAULT_START = date(2020, 10, 1)
+COMPLAINT_TYPES = ("Sewer", "Sewer Maintenance")
 
 FIELDS = (
     "unique_key,created_date,complaint_type,"
@@ -114,7 +115,7 @@ def fetch_window(session, start, end):
     where = (
         f"created_date >= '{start}T00:00:00' "
         f"AND created_date < '{end}T00:00:00' "
-        "AND complaint_type = 'Sewer'"
+        "AND complaint_type IN ('Sewer', 'Sewer Maintenance')"
     )
 
     def count_source():
@@ -191,7 +192,7 @@ def to_rows(records):
     if frame.unique_key.duplicated().any():
         raise ValueError("Duplicate complaint IDs")
 
-    if not frame.complaint_type.eq("Sewer").all():
+    if not frame.complaint_type.isin(COMPLAINT_TYPES).all():
         raise ValueError("Unexpected complaint type")
 
     for column in (
@@ -423,7 +424,7 @@ def main():
             return
 
         print(
-            f"Collecting Sewer complaints: {start} to {end} "
+            f"Collecting Sewer and Sewer Maintenance complaints: {start} to {end} "
             "(end exclusive)"
         )
 
