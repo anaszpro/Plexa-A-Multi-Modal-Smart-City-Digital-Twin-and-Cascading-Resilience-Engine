@@ -1,0 +1,174 @@
+{
+  "experiment_id": "climate-baseline-v2-tree-weight-scale-01",
+  "target": "reported_street_or_highway_flooding_next_hour",
+  "features": [
+    "elevation_mean_m",
+    "terrain_endpoint_grade_abs",
+    "terrain_relief_m",
+    "length_m",
+    "rain_1h_mm",
+    "rain_3h_mm",
+    "rain_6h_mm",
+    "rain_24h_mm"
+  ],
+  "splits": {
+    "train": [
+      "2020-10-14T04:00:00Z",
+      "2024-12-25T05:00:00Z"
+    ],
+    "validation": [
+      "2025-01-01T05:00:00Z",
+      "2025-12-25T05:00:00Z"
+    ],
+    "test": [
+      "2026-01-01T05:00:00Z",
+      "2026-10-07T04:00:00Z"
+    ]
+  },
+  "rainfall_availability_lag_hours": 3,
+  "training_sample": {
+    "view": "training_sample",
+    "actual_rows": 666857,
+    "positive_rows": 12817,
+    "negative_rows": 654040,
+    "negative_keep_fraction": 0.0002,
+    "sampling_seed": "plexa-baseline-v1",
+    "positive_inclusion_weight": 1,
+    "negative_inclusion_weight": 5000,
+    "additional_balanced_class_weights": false
+  },
+  "random_seed": 42,
+  "candidate_families": [
+    "hist_gradient_boosting_raw_weights"
+  ],
+  "selection_policy": {
+    "model_selection_data": "validation_only",
+    "threshold_selection_data": "validation_only",
+    "final_test": "evaluate_frozen_model_and_threshold",
+    "evaluation_population": "natural_eligible_prevalence",
+    "metrics": [
+      "average_precision",
+      "precision_recall",
+      "precision_and_recall_at_selected_threshold",
+      "true_positive_false_positive_false_negative_counts",
+      "alerts_per_hour_or_day"
+    ],
+    "batch_average_precision_averaging_allowed": false,
+    "probability_calibration_claimed": false
+  },
+  "ida": {
+    "mode": "integration_replay",
+    "included_in_training_period": true,
+    "independent_event_evaluation": false,
+    "proposed_start_utc": "2021-09-01T04:00:00+00:00",
+    "proposed_end_utc_exclusive": "2021-09-03T04:00:00+00:00",
+    "shared_road_subset_frozen": false
+  },
+  "preparation_evidence_sha256": {
+    "dataset_manifest": "234b8bd82e567d21d0674b31c7eeff1c573230ea33543c4a160d967d4e9ece3a",
+    "preparation_config": "c7d4449e5a0fa1f2a94691890167ecd14178f31caee7a587467acf81fa0f33df",
+    "target_config": "9a159441365b54ad709ffb6404def7c638c6a86b7cb51a453da8b2127c39d797",
+    "pretraining_report": "eac7cfcbd1d63cf8361bd958b5855d3bb3b5e539fbe6fb10e08f8bf7de27c5eb"
+  },
+  "status": "ready_for_prefit_git_checkpoint",
+  "model_settings": {
+    "hist_gradient_boosting_raw_weights": {
+      "preprocessing": "none",
+      "parameters": {
+        "loss": "log_loss",
+        "learning_rate": 0.1,
+        "max_iter": 100,
+        "max_leaf_nodes": 15,
+        "min_samples_leaf": 100,
+        "l2_regularization": 1.0,
+        "early_stopping": false,
+        "class_weight": null,
+        "random_state": 42
+      }
+    }
+  },
+  "fitting_weight_policy": {
+    "fitting_weights": "original_inverse_inclusion_weights",
+    "positive_weight": 1,
+    "negative_weight": 5000,
+    "scaler_weights": "not_applicable",
+    "additional_class_balancing": false
+  },
+  "development_environment": {
+    "python": "3.11.16",
+    "pandas": "3.0.6",
+    "scikit_learn": "1.9.1"
+  },
+  "evaluation_details": {
+    "batch_rows": 100000,
+    "population": "all_eligible_rows_at_natural_prevalence",
+    "evaluation_sample_weights": "none",
+    "score_binning": {
+      "method": "fixed_logarithmic_edges",
+      "edges_definition": "unique(concatenate([0.0], geomspace(1e-12, 1.0, 4096)))",
+      "score_range": [
+        0.0,
+        1.0
+      ],
+      "nonfinite_or_out_of_range_scores": "error",
+      "group_counts_across_batches_before_metrics": true
+    },
+    "average_precision": {
+      "method": "global_score_bin_counts",
+      "reported_name": "approximate_average_precision",
+      "limitation": "Scores within each bin are treated as tied; this can differ from exact unbinned average precision.",
+      "average_batch_AP": false
+    },
+    "model_selection": {
+      "dataset": "validation",
+      "criterion": "highest_approximate_average_precision",
+      "exact_tie_preference": [
+        "hist_gradient_boosting_raw_weights"
+      ]
+    },
+    "threshold_selection": {
+      "dataset": "validation",
+      "candidate_thresholds": "fixed_score_bin_edges",
+      "decision_rule": "score >= threshold",
+      "objective": "maximum_F1",
+      "tie_break": "fewest_alerts_then_highest_threshold",
+      "zero_denominator_metric_value": 0.0
+    },
+    "final_test": {
+      "use_frozen_selected_model": true,
+      "use_frozen_validation_threshold": true,
+      "retuning_allowed": false,
+      "report": [
+        "approximate_average_precision",
+        "precision",
+        "recall",
+        "F1",
+        "TP_FP_TN_FN",
+        "total_alerts",
+        "alerts_and_false_alerts_by_UTC_day",
+        "borough_support_and_metrics"
+      ]
+    }
+  },
+  "parent_experiment": {
+    "experiment_id": "climate-baseline-v2-chronological-01",
+    "checkpoint_run_id": "20261024T194134Z_6afca461",
+    "experiment_sha256": "9ded06bd90704aa4be835076af5dd99d2f26bbb43ff33b3cbe0e261c9510122e",
+    "validation_comparison_sha256": "6e64aaf7ee5a74695eb2e28172d3b96bd2cd87fabbfe83910d8e1fbd6bd65897"
+  },
+  "tuning_disclosure": {
+    "informed_by_parent_validation": true,
+    "validation_is_reused_development_data": true,
+    "test_used_for_tuning": false,
+    "change": "tree_fitting_weight_scale_only",
+    "unchanged": [
+      "training_sample",
+      "features",
+      "splits",
+      "tree_parameters",
+      "random_seed",
+      "score_bins",
+      "threshold_selection_policy"
+    ]
+  }
+}
