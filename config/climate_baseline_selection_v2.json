@@ -1,0 +1,72 @@
+{
+  "selection_id": "climate-baseline-v2-selection-01",
+  "status": "selected_for_final_test_not_yet_tested",
+  "model_name": "hist_gradient_boosting_raw_weights",
+  "checkpoint_run_id": "20261024T202330Z_9b46600b",
+  "model_path": "data/processed/climate_baseline_v2_runs/20261024T202330Z_9b46600b/hist_gradient_boosting_raw_weights.joblib",
+  "model_sha256": "a626595770991d5498d61d1435597f52f19ddff9a50ef0c92b6a68744dd10388",
+  "experiment_path": "config/climate_baseline_tuning_v2_01.json",
+  "experiment_sha256": "f348be2573b983bf80f97052829b3459a8268266bdfb6cad23c7e3150d97580f",
+  "dataset_manifest_sha256": "234b8bd82e567d21d0674b31c7eeff1c573230ea33543c4a160d967d4e9ece3a",
+  "validation_result_sha256": "89d423c96430682efcf7b2cc067a724c5dd2e9a152b454c2cb23a1933f58a076",
+  "features": [
+    "elevation_mean_m",
+    "terrain_endpoint_grade_abs",
+    "terrain_relief_m",
+    "length_m",
+    "rain_1h_mm",
+    "rain_3h_mm",
+    "rain_6h_mm",
+    "rain_24h_mm"
+  ],
+  "positive_class": 1,
+  "selection_metric": "validation_approximate_average_precision",
+  "threshold_policy": "validation_maximum_F1",
+  "alert_threshold": 0.011027849803419691,
+  "decision_rule": "class_1_score >= alert_threshold",
+  "score_calibrated": false,
+  "validation_metrics": {
+    "model": "hist_gradient_boosting_raw_weights",
+    "approximate_AP": 4.0890526510715746e-05,
+    "validation_F1_threshold": 0.011027849803419691,
+    "precision": 0.0007496251874062968,
+    "recall": 0.0005911912503694946,
+    "F1": 0.0006610477607007106,
+    "TP": 2,
+    "FP": 2666,
+    "FN": 3381,
+    "TN": 782113273,
+    "alerts": 2668,
+    "mean_alerts_per_24h": 7.4525139664804465,
+    "mean_false_alerts_per_24h": 7.446927374301676
+  },
+  "test_interval": [
+    "2026-01-01T05:00:00Z",
+    "2026-10-07T04:00:00Z"
+  ],
+  "test_policy": {
+    "natural_eligible_prevalence": true,
+    "refit_allowed": false,
+    "threshold_retuning_allowed": false,
+    "score_bins": {
+      "method": "fixed_logarithmic_edges",
+      "edges_definition": "unique(concatenate([0.0], geomspace(1e-12, 1.0, 4096)))",
+      "score_range": [
+        0.0,
+        1.0
+      ],
+      "nonfinite_or_out_of_range_scores": "error",
+      "group_counts_across_batches_before_metrics": true
+    }
+  },
+  "limitations": [
+    "Very low validation recall and precision.",
+    "Validation informed the weight-scale tuning experiment.",
+    "Average precision uses grouped score bins and is approximate.",
+    "Missing and uncertain labels restrict the evaluation population.",
+    "Scores predict qualifying reports, not verified physical flooding.",
+    "Ida is a training-period integration replay."
+  ],
+  "intended_use": "research_baseline_and_labeled_integration_demo",
+  "operational_warning_readiness_established": false
+}
