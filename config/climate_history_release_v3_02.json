@@ -1,0 +1,61 @@
+{
+  "release_id": "climate-history-v3-02-experimental-01",
+  "status": "experimental_native_inference_ready_shared_contract_and_scenario_mapping_pending",
+  "bundle_path": "data/processed/climate_releases/climate-history-v3-02-experimental-01",
+  "release_manifest_sha256": "56e5aae24ecbf9173e2c9599b9617479ea196884576c164ac72906e73149a876",
+  "checkpoint_run_id": "20261025T030202Z_74a0334f",
+  "model_sha256": "040ed65c0e38bdb8f3ffaf06efcae6a8782fe435d4a3a306b44a212d64ce5800",
+  "target": "reported_street_or_highway_flooding_next_hour",
+  "model_feature_order": [
+    "elevation_mean_m",
+    "terrain_endpoint_grade_abs",
+    "terrain_relief_m",
+    "length_m",
+    "rain_1h_mm",
+    "rain_3h_mm",
+    "rain_6h_mm",
+    "rain_24h_mm",
+    "segment_positive_hours_365d",
+    "cell_positive_hours_365d"
+  ],
+  "native_external_features": [
+    "elevation_mean_m",
+    "terrain_endpoint_grade_abs",
+    "terrain_relief_m",
+    "length_m",
+    "rain_1h_mm",
+    "rain_3h_mm",
+    "rain_6h_mm",
+    "rain_24h_mm"
+  ],
+  "internally_computed_features": [
+    "segment_positive_hours_365d",
+    "cell_positive_hours_365d"
+  ],
+  "native_format_version": "climate-history-native-0.1",
+  "shared_contract_revision_accepted": false,
+  "shared_scenario_subset_approved": false,
+  "threshold": 0.0014566994738777757,
+  "score_calibrated": false,
+  "development_metrics": {
+    "F1": 0.0034253092293054233,
+    "FN": 3365,
+    "FP": 7109,
+    "TN": 782108830,
+    "TP": 18,
+    "alerts": 7127,
+    "approximate_AP": 0.00010501728042707985,
+    "mean_alerts_per_24h": 19.907821229050278,
+    "mean_false_alerts_per_24h": 19.85754189944134,
+    "negative_rows": 782115939,
+    "positive_rows": 3383,
+    "precision": 0.0025256068472007858,
+    "recall": 0.0053207212533254505,
+    "rows": 782119322,
+    "threshold": 0.0014566994738777757
+  },
+  "development_data_reused_for_tuning": true,
+  "fresh_independent_test_assessment": false,
+  "ida_training_overlap": true,
+  "operational_warning_readiness_established": false
+}
