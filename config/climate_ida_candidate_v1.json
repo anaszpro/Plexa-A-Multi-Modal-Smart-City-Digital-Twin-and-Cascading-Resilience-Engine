@@ -1,0 +1,25 @@
+{
+  "candidate_id": "ida-2021-history-candidate-v1",
+  "status": "candidate_for_Anas_review_not_approved",
+  "candidate_path": "data/processed/climate_scenarios/ida-2021-history-candidate-v1",
+  "candidate_manifest_sha256": "1cbb296d7755a6d003a88d874b5ccc498e328042ae0ab5ab2e5ef74713f01dcc",
+  "package_id": "climate-history-v3-02-experimental-01",
+  "utc_interval": [
+    "2021-09-01T04:00:00Z",
+    "2021-09-03T04:00:00Z"
+  ],
+  "physical_segments": 10,
+  "prediction_rows": 480,
+  "roads_per_borough": 2,
+  "selection": "complete_weather_and_valid_geometry_then_first_IDs_per_borough_before_prediction",
+  "label_review_counts": {
+    "positive": 1,
+    "no_report_observed": 310,
+    "unknown": 169
+  },
+  "model_alerts": 0,
+  "shared_contract_accepted": false,
+  "road_subset_approved": false,
+  "lion_crosswalk_included": false,
+  "ida_in_training_period": true
+}
