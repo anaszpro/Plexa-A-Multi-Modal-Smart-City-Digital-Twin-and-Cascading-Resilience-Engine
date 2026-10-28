@@ -1,0 +1,15 @@
+# Preserve reproducible source hashes across Windows and Unix checkouts.
+* text=auto
+*.py text eol=lf
+*.ipynb text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+*.sql text eol=lf
+*.csv text eol=lf
+*.pkl -text
+*.parquet -text
+*.db -text
+*.dump -text
+*.pdf -text
+*.png -text

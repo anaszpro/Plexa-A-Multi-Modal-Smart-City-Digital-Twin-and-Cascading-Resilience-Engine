@@ -1,0 +1,28 @@
+# Local environments and generated files
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+node_modules/
+frontend/dist/
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Mobility datasets and database backups stay local.
+/data/mobility/*
+!/data/mobility/clean/
+!/data/mobility/Plexa Mobility Module Data Map v3.pdf
+/data/mobility/clean/*
+!/data/mobility/clean/*_snapshot.json
+!/data/mobility/clean/*_report.md
+*.dump
+
+# Keep fitted models, reports, metrics and manifests; large row-level outputs stay local.
+/outputs/mobility/**/*.parquet
+/outputs/mobility/mlartifacts/
+/outputs/mobility/mlflow.db*
+/outputs/mobility/mlflow_relocation.json
+/tmp/
