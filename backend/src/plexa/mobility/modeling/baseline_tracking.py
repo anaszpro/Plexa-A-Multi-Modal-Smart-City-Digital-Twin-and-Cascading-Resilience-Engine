@@ -27,7 +27,7 @@ def _local_client(root: str | Path):
     from mlflow.tracking import MlflowClient
 
     project_root = Path(root).resolve()
-    tracking_dir = project_root / "experiments"
+    tracking_dir = project_root / "outputs" / "mobility"
     artifact_dir = tracking_dir / "mlartifacts"
     artifact_dir.mkdir(parents=True, exist_ok=True)
     tracking_uri = "sqlite:///" + (tracking_dir / "mlflow.db").as_posix()

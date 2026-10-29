@@ -1,0 +1,15 @@
+# Python 3.13; preparation, training, evaluation and local MLflow.
+pandas==2.3.2
+numpy==2.2.6
+pyarrow==24.0.0
+SQLAlchemy==2.1.4
+psycopg2-binary==2.9.13
+holidays==0.106
+matplotlib==3.10.8
+mlflow==3.17.1
+lightgbm==4.7.0
+scikit-learn==1.8.0
+geopandas==1.2.0
+pyogrio==0.13.0
+pyproj==3.8.0
+ipykernel==7.4.0

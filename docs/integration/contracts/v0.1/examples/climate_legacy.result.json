@@ -1,0 +1,31 @@
+{
+  "schema_version": "0.1.0",
+  "scenario_id": "ida-2021-static-v1",
+  "run_id": "example-climate_legacy-001",
+  "operation": "climate.legacy_classify",
+  "package_id": "climate-legacy-rf-v1-demo",
+  "request_sha256": "09cbf438876cf62ab0ed62fe4501b5dc221da5052170f0301530606541dc9e4f",
+  "records": [
+    {
+      "request_id": "climate-ida-example",
+      "status": "ok",
+      "reason_code": null,
+      "warnings": [
+        "LEGACY_PROXY_NOT_CALIBRATED",
+        "TIME_UNRESOLVED",
+        "LOCATION_MAPPING_REQUIRED",
+        "RAIN_WINDOW_COUNTS_STORED_ROWS"
+      ],
+      "result": {
+        "target": "same_stored_hour_sewer_report_proxy",
+        "predicted_class": 1,
+        "class_0_score": 0.15834373045327302,
+        "class_1_score": 0.8416562695467269,
+        "score_calibrated": false,
+        "prediction_horizon_hours": null,
+        "severity": null,
+        "water_depth_m": null
+      }
+    }
+  ]
+}

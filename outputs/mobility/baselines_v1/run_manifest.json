@@ -1,0 +1,691 @@
+{
+  "created_at_utc": "2026-10-15T01:04:48.798700+00:00",
+  "output_version": "baselines_v1",
+  "elapsed_seconds": 48.718,
+  "input_model_sha256": "33f9e12a3db669d4e2ebe1a0b7797b6cca5ffa1b9305ab9d92384a182d84679a",
+  "input_splits_sha256": "230495bab83c61b915c4738d9d4e6c7313d216b62485f01982369d0bcb778862",
+  "seed": 42,
+  "calibration_folds": 3,
+  "methodology": [
+    "These are four independent benchmark experiments. No test data were used to choose parameters.",
+    "B1 uses road-balanced empirical q10/q50/q90 by weekday/hour, with hour and city fallbacks.",
+    "B2 uses log1p volume: borough/lane-group profile shrunk toward B1, a road level, and an observed-hour shape pooled across weekdays.",
+    "Fixed priors: group20 road/direction units, road level2 observed dates, hourly shape3 observed dates. These values were not tuned against test scores.",
+    "B2 q10/q50/q90 use signed log-residual quantiles from three grouped out-of-fold training fits. Residuals are fitted by hour with shrinkage toward pooled residual quantiles.",
+    "Known-road calibration holds out whole segment/date groups while retaining road history; cold-start calibration withholds whole segments.",
+    "Empirical 80% prediction intervals have no formal coverage guarantee. OOF fits use less data than final fits; calibration may not transfer across years or seasons.",
+    "Time-test training ends in2018; test starts in2019 and includes later COVID-era changes.",
+    "Season transfer uses17 road/direction/year pairs (15 segments), full autumn versus same-year full summer days. It is a small retrospective sensitivity test, not a future forecast.",
+    "All road_type values are unspecified. The first two baselines do not use source, holiday or year as predictors; those remain available for the boosted baseline.",
+    "Subgroup metrics recompute equal-road weights within each subgroup; do not average subgroup scores."
+  ],
+  "models": [
+    {
+      "scenario": "within_road",
+      "model": "B1_global",
+      "fold_counts": [],
+      "metrics": {
+        "n_rows": 312488,
+        "n_roads": 4671,
+        "n_segments": 3453,
+        "mae": 325.83314510036007,
+        "rmse": 710.2669311804563,
+        "log1p_mae": 0.8728060780309901,
+        "log1p_rmse": 1.1714750437287527,
+        "coverage_80": 0.7999591455387022,
+        "mean_interval_width": 935.8030534622225,
+        "pinball_10": 42.8489587903053,
+        "pinball_50": 162.91657255018004,
+        "pinball_90": 159.94171887046537,
+        "interval_score_80": 2027.906776607707,
+        "weighted_interval_score": 243.80483347396714
+      }
+    },
+    {
+      "scenario": "within_road",
+      "model": "B2_road_scaled",
+      "fold_counts": [
+        {
+          "fold": 0,
+          "fit_rows": 670559,
+          "held_rows": 396603,
+          "fit_roads": 4671,
+          "held_roads": 4657
+        },
+        {
+          "fold": 1,
+          "fit_rows": 715434,
+          "held_rows": 351728,
+          "fit_roads": 4671,
+          "held_roads": 4660
+        },
+        {
+          "fold": 2,
+          "fit_rows": 748331,
+          "held_rows": 318831,
+          "fit_roads": 4671,
+          "held_roads": 4650
+        }
+      ],
+      "metrics": {
+        "n_rows": 312488,
+        "n_roads": 4671,
+        "n_segments": 3453,
+        "mae": 117.19520479705099,
+        "rmse": 289.59279855662953,
+        "log1p_mae": 0.28425412352606566,
+        "log1p_rmse": 0.43404913586579175,
+        "coverage_80": 0.8561219450900814,
+        "mean_interval_width": 383.4909880070728,
+        "pinball_10": 25.30544056910808,
+        "pinball_50": 58.597602398525495,
+        "pinball_90": 31.13717783407026,
+        "interval_score_80": 564.4261840317834,
+        "weighted_interval_score": 76.69348053446923
+      }
+    },
+    {
+      "scenario": "unseen_roads",
+      "model": "B1_global",
+      "fold_counts": [],
+      "metrics": {
+        "n_rows": 281864,
+        "n_roads": 1175,
+        "n_segments": 892,
+        "mae": 352.65265628901454,
+        "rmse": 764.0875438537003,
+        "log1p_mae": 0.9364429695879627,
+        "log1p_rmse": 1.2588282987450747,
+        "coverage_80": 0.7766376375396418,
+        "mean_interval_width": 872.6518099627314,
+        "pinball_10": 45.582250721517205,
+        "pinball_50": 176.32632814450727,
+        "pinball_90": 173.463037955467,
+        "interval_score_80": 2190.4528867698423,
+        "weighted_interval_score": 263.5810778809943
+      }
+    },
+    {
+      "scenario": "unseen_roads",
+      "model": "B2_road_scaled",
+      "fold_counts": [
+        {
+          "fold": 0,
+          "fit_rows": 759867,
+          "held_rows": 370319,
+          "fit_roads": 3154,
+          "held_roads": 1570
+        },
+        {
+          "fold": 1,
+          "fit_rows": 769647,
+          "held_rows": 360539,
+          "fit_roads": 3155,
+          "held_roads": 1569
+        },
+        {
+          "fold": 2,
+          "fit_rows": 730858,
+          "held_rows": 399328,
+          "fit_roads": 3139,
+          "held_roads": 1585
+        }
+      ],
+      "metrics": {
+        "n_rows": 281864,
+        "n_roads": 1175,
+        "n_segments": 892,
+        "mae": 314.213169615891,
+        "rmse": 680.952743415969,
+        "log1p_mae": 0.8094832819147814,
+        "log1p_rmse": 1.1109690606484517,
+        "coverage_80": 0.7887187314314903,
+        "mean_interval_width": 834.9207600731713,
+        "pinball_10": 43.99400083413083,
+        "pinball_50": 157.1065848079455,
+        "pinball_90": 131.85282671037933,
+        "interval_score_80": 1758.4682754451017,
+        "weighted_interval_score": 221.96894156830382
+      }
+    },
+    {
+      "scenario": "time",
+      "model": "B1_global",
+      "fold_counts": [],
+      "metrics": {
+        "n_rows": 258867,
+        "n_roads": 1154,
+        "n_segments": 775,
+        "mae": 196.01189374284428,
+        "rmse": 367.24130452118925,
+        "log1p_mae": 0.7049842293863685,
+        "log1p_rmse": 0.9247487941986028,
+        "coverage_80": 0.8134011185329739,
+        "mean_interval_width": 691.4800117334819,
+        "pinball_10": 28.134651373734453,
+        "pinball_50": 98.00594687142214,
+        "pinball_90": 77.13852330650218,
+        "interval_score_80": 1052.7317468023664,
+        "weighted_interval_score": 135.51941436777247
+      }
+    },
+    {
+      "scenario": "time",
+      "model": "B2_road_scaled",
+      "fold_counts": [
+        {
+          "fold": 0,
+          "fit_rows": 256652,
+          "held_rows": 135188,
+          "fit_roads": 1154,
+          "held_roads": 1153
+        },
+        {
+          "fold": 1,
+          "fit_rows": 260988,
+          "held_rows": 130852,
+          "fit_roads": 1154,
+          "held_roads": 1153
+        },
+        {
+          "fold": 2,
+          "fit_rows": 266040,
+          "held_rows": 125800,
+          "fit_roads": 1154,
+          "held_roads": 1154
+        }
+      ],
+      "metrics": {
+        "n_rows": 258867,
+        "n_roads": 1154,
+        "n_segments": 775,
+        "mae": 102.93194838570068,
+        "rmse": 238.576692551248,
+        "log1p_mae": 0.349059011794109,
+        "log1p_rmse": 0.5057925738848497,
+        "coverage_80": 0.6633363517094334,
+        "mean_interval_width": 235.72979952455103,
+        "pinball_10": 22.396301296674448,
+        "pinball_50": 51.46597419285034,
+        "pinball_90": 32.57120811726698,
+        "interval_score_80": 549.6750941394143,
+        "weighted_interval_score": 70.95565573786116
+      }
+    },
+    {
+      "scenario": "season_transfer",
+      "model": "B1_global",
+      "fold_counts": [],
+      "metrics": {
+        "n_rows": 3624,
+        "n_roads": 17,
+        "n_segments": 15,
+        "mae": 269.64991968739014,
+        "rmse": 528.189291028599,
+        "log1p_mae": 0.7861426053773704,
+        "log1p_rmse": 1.0180384926857897,
+        "coverage_80": 0.7631826929089143,
+        "mean_interval_width": 760.7466702150208,
+        "pinball_10": 35.80518861819674,
+        "pinball_50": 134.82495984369507,
+        "pinball_90": 126.33176413281457,
+        "interval_score_80": 1621.369527510113,
+        "weighted_interval_score": 197.97460839647093
+      }
+    },
+    {
+      "scenario": "season_transfer",
+      "model": "B2_road_scaled",
+      "fold_counts": [
+        {
+          "fold": 0,
+          "fit_rows": 1368,
+          "held_rows": 936,
+          "fit_roads": 17,
+          "held_roads": 17
+        },
+        {
+          "fold": 1,
+          "fit_rows": 1584,
+          "held_rows": 720,
+          "fit_roads": 17,
+          "held_roads": 17
+        },
+        {
+          "fold": 2,
+          "fit_rows": 1656,
+          "held_rows": 648,
+          "fit_roads": 17,
+          "held_roads": 17
+        }
+      ],
+      "metrics": {
+        "n_rows": 3624,
+        "n_roads": 17,
+        "n_segments": 15,
+        "mae": 124.40541066371188,
+        "rmse": 248.25395183419636,
+        "log1p_mae": 0.3640829268899277,
+        "log1p_rmse": 0.48918877314484227,
+        "coverage_80": 0.9080135294164308,
+        "mean_interval_width": 624.1020065957462,
+        "pinball_10": 24.46348296831965,
+        "pinball_50": 62.20270533185594,
+        "pinball_90": 44.3700017837597,
+        "interval_score_80": 688.3348475207935,
+        "weighted_interval_score": 87.35746005595685
+      }
+    }
+  ],
+  "mlflow_runs": [
+    {
+      "scenario": "within_road",
+      "baseline": "B1_global",
+      "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+      "experiment_id": "1",
+      "run_id": "dd1e9f69be464893afb3be40c1646ced"
+    },
+    {
+      "scenario": "within_road",
+      "baseline": "B2_road_scaled",
+      "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+      "experiment_id": "1",
+      "run_id": "32f08c62eda44d6e81cf2cca3936e163"
+    },
+    {
+      "scenario": "unseen_roads",
+      "baseline": "B1_global",
+      "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+      "experiment_id": "1",
+      "run_id": "0b8f8f3a454a469fa022a01da68b66da"
+    },
+    {
+      "scenario": "unseen_roads",
+      "baseline": "B2_road_scaled",
+      "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+      "experiment_id": "1",
+      "run_id": "612308511ac5469cbdef861fcc498579"
+    },
+    {
+      "scenario": "time",
+      "baseline": "B1_global",
+      "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+      "experiment_id": "1",
+      "run_id": "916f788f59e14c608bf368aa7932d2d0"
+    },
+    {
+      "scenario": "time",
+      "baseline": "B2_road_scaled",
+      "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+      "experiment_id": "1",
+      "run_id": "b55ce4b97fd54d3289c54346170cac27"
+    },
+    {
+      "scenario": "season_transfer",
+      "baseline": "B1_global",
+      "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+      "experiment_id": "1",
+      "run_id": "d5284f76d283477ba5267166b6066cd3"
+    },
+    {
+      "scenario": "season_transfer",
+      "baseline": "B2_road_scaled",
+      "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+      "experiment_id": "1",
+      "run_id": "b56523e224c94770a4be6aa4521a473e"
+    }
+  ],
+  "source_code_sha256": {
+    "mobility_baselines.py": "07c8b5b95d7fadabfd809fcf81ac529795a17320e0b7e1de70065a497bc3bd31",
+    "baseline_evaluation.py": "20d5014f7b7f1157f00652932b8ccd0f98f465a24a6055dc134c0cff61448ea6",
+    "baseline_tracking.py": "a81bb60337feb9f4bf5c6f0f7142bc00b1271ad70b2679c9f3c78c997ea08814",
+    "train_baselines.py": "228dbd3f038e331aadafdd75f352b7be6198b5fe84d2d21d7ae89101e6c130be"
+  },
+  "package_versions": {
+    "numpy": "2.2.6",
+    "pandas": "2.3.2",
+    "pyarrow": "24.0.0",
+    "mlflow": "3.17.1"
+  },
+  "files": {
+    "baseline_comparison.png": {
+      "sha256": "4bf203f37252f69f581adabf9df3c1c9cdecee1050a13ce4dec8ae39ae0395c8",
+      "bytes": 138345
+    },
+    "baseline_report.md": {
+      "sha256": "2ddefc2122f592c2e30ff6364feb2ffa94dfacb5af5a33cfc46674d97b6cf36f",
+      "bytes": 24492
+    },
+    "methodology.json": {
+      "sha256": "e9106e1ee068821c00517a5682bd2656ec95c0c02b8743136c42be7f9c35d2d1",
+      "bytes": 1662
+    },
+    "metrics.csv": {
+      "sha256": "65ef5389c4be4155aaf31d1d7527f7af688a57e2b24d79968bb0b3eb5b4fdfef",
+      "bytes": 2133
+    },
+    "mlflow_runs.json": {
+      "sha256": "a723aac2728ca65ef884d8511cb2d0a712f50cb4e71d2b90a7be7e470e12e394",
+      "bytes": 1997
+    },
+    "paired_comparison.csv": {
+      "sha256": "3cecefaa0488bda43fe29d34db91a76266492851bfe43f85308bc720a73266fd",
+      "bytes": 815
+    },
+    "season_transfer/B1_global/global_profiles.parquet": {
+      "sha256": "00d6d28e447009a60401381efee5712e12cf729c6f056c55dee7bec38cf73c97",
+      "bytes": 7206
+    },
+    "season_transfer/B1_global/hour_fallbacks.parquet": {
+      "sha256": "0367d6e994938b45b4687a1aff0f4a040c7decc0b4ba210d90589d3d571a896b",
+      "bytes": 3478
+    },
+    "season_transfer/B1_global/metrics.json": {
+      "sha256": "66d1d35401017f73946000de0f0832c0b08a4e2df25e7c9c8a08ae355efbe6bf",
+      "bytes": 481
+    },
+    "season_transfer/B1_global/model.pkl": {
+      "sha256": "c514a79250444a3cd3817c1ee0c7a8d772803e50012dc3af49347f01f2b44873",
+      "bytes": 6407
+    },
+    "season_transfer/B1_global/per_road_metrics.parquet": {
+      "sha256": "8a2558c6853f25791690532a13bea2c9539b8786ecf7d9586a74aa44e333ade2",
+      "bytes": 13864
+    },
+    "season_transfer/B1_global/run_parameters.json": {
+      "sha256": "3ac1c731676b6c4273f7b153c97e76ee3981cf0cc08536f7e17636d840a3c14e",
+      "bytes": 731
+    },
+    "season_transfer/B1_global/subgroup_metrics.csv": {
+      "sha256": "b2d80281dc57fd898115816c7bbc7876b686223e94dcef87b918ea64a245fcfb",
+      "bytes": 2763
+    },
+    "season_transfer/B1_global/test_predictions.parquet": {
+      "sha256": "6a95f3ddd4a80f98cf2173414669f53fc86a618ec072477dc9ac2ac1ecb8a214",
+      "bytes": 62984
+    },
+    "season_transfer/B2_road_scaled/group_profiles.parquet": {
+      "sha256": "0b0ddcf9cb0315fa807deb7dc642d0ac1837aeae579ec5677f2014de8a28ffe9",
+      "bytes": 33430
+    },
+    "season_transfer/B2_road_scaled/interval_calibration.parquet": {
+      "sha256": "364ea66026ca02027f0b29e1ff414e4a445ae858b159fdf7a946899c66abce2a",
+      "bytes": 4622
+    },
+    "season_transfer/B2_road_scaled/metrics.json": {
+      "sha256": "28dc8198dbaa016d5fa8ffe4b88c0bcb557d928893bffeebdf41139743bca956",
+      "bytes": 480
+    },
+    "season_transfer/B2_road_scaled/model.pkl": {
+      "sha256": "4226a9d36c973e42b750a9792bccd16863170ce988f66ba86fbc63d87f13336c",
+      "bytes": 143701
+    },
+    "season_transfer/B2_road_scaled/per_road_metrics.parquet": {
+      "sha256": "0ccb785aafdee23a930463fca481d34fb10d3100f7bfd3962d70d593430001de",
+      "bytes": 13988
+    },
+    "season_transfer/B2_road_scaled/road_hour_shapes.parquet": {
+      "sha256": "a7772cdfb877bd2d5bff6ec79f5f931bf0b8a3732ab1cd417b8d3e590e51f52c",
+      "bytes": 42239
+    },
+    "season_transfer/B2_road_scaled/road_levels.parquet": {
+      "sha256": "bb40dbc7bb79c0026deba7121998efada807a476f121bf2f320d11d68605a625",
+      "bytes": 35146
+    },
+    "season_transfer/B2_road_scaled/run_parameters.json": {
+      "sha256": "5e95c55e6e0d33b7d33cdd96f75f96710de6d8c83a09955a714e82a0297619a7",
+      "bytes": 693
+    },
+    "season_transfer/B2_road_scaled/subgroup_metrics.csv": {
+      "sha256": "c7bd3273268d30f420b059ba2ae7cbb05212ca130ca9daa490d4264d4c58a17e",
+      "bytes": 2833
+    },
+    "season_transfer/B2_road_scaled/test_predictions.parquet": {
+      "sha256": "16e894f4dac32fb50a4e70759e53e98b26a65483f9ef79c2715028621c715621",
+      "bytes": 123332
+    },
+    "season_transfer/training_oof_calibration.parquet": {
+      "sha256": "cf09e2f0317236b79fa4ecdff1fbc9e6cc2b17013a32bcfd1f4d38c8605fd4b4",
+      "bytes": 66326
+    },
+    "subgroup_metrics.csv": {
+      "sha256": "a095f31f72d437e9f0289fca141f0bc2be622c5602a9f9399f4897210ae6ff6e",
+      "bytes": 27252
+    },
+    "time/B1_global/global_profiles.parquet": {
+      "sha256": "c8653c302e027eb49d164f75d1404ca8a72a3e26a4a534b4206a49c26cc01928",
+      "bytes": 7030
+    },
+    "time/B1_global/hour_fallbacks.parquet": {
+      "sha256": "d29f271d67b92aa624fe86e14dea2db8f67eb485527d78d572247eb9c5f68cbb",
+      "bytes": 3446
+    },
+    "time/B1_global/metrics.json": {
+      "sha256": "6a26dc41add795adccb66b7953f01d1d58205f1acb241fe354b7c5fed991d4c8",
+      "bytes": 488
+    },
+    "time/B1_global/model.pkl": {
+      "sha256": "571197c16821524edede87845e834d35a38eccfc312cd58e1a21b95a3ed58a9f",
+      "bytes": 6407
+    },
+    "time/B1_global/per_road_metrics.parquet": {
+      "sha256": "98e9d1916a443197d1dafd0a6682c12ef6cc283bbcd3cae4ef53d46008346dbf",
+      "bytes": 113017
+    },
+    "time/B1_global/run_parameters.json": {
+      "sha256": "a76c0c09148eb6d068d5ce71dcef9d81a3f83ba2af19d63de410702a38433117",
+      "bytes": 724
+    },
+    "time/B1_global/subgroup_metrics.csv": {
+      "sha256": "b55dad7a402c3f8edf9930e073a6b4be3b29b06233f3dc8c8899ae2215913ff5",
+      "bytes": 3986
+    },
+    "time/B1_global/test_predictions.parquet": {
+      "sha256": "ee6cf2e9040effcf55a96d6bffae826def2172a210bf21c2b3e7a1309be10fd4",
+      "bytes": 1235104
+    },
+    "time/B2_road_scaled/group_profiles.parquet": {
+      "sha256": "3df58d8c636ebb5416d4ab14b32797e3bca53f2547d0b1af453bcd39f77536c4",
+      "bytes": 86272
+    },
+    "time/B2_road_scaled/interval_calibration.parquet": {
+      "sha256": "04a2c3016f95a6b5454400d4bbcadba71e84f0982b3654319b67a7fca740bc97",
+      "bytes": 4662
+    },
+    "time/B2_road_scaled/metrics.json": {
+      "sha256": "09e5343962666ff12d643239cfb4620d45fff9a1ccb7edf60698577b0d29bc06",
+      "bytes": 484
+    },
+    "time/B2_road_scaled/model.pkl": {
+      "sha256": "abfdab502bea7006268cad69df2db1fe1672cc214bac65ddf9b6259ec3b2c887",
+      "bytes": 1293751
+    },
+    "time/B2_road_scaled/per_road_metrics.parquet": {
+      "sha256": "b2186bc20bae22aeba7c1a509649a09ae89fc72fa2eeff1f01aa1b8b9f7f3440",
+      "bytes": 139335
+    },
+    "time/B2_road_scaled/road_hour_shapes.parquet": {
+      "sha256": "9aeaad4c3aed8395ddd32ae92510c0d36630e6cfa29d9f8762947b4736a31c7f",
+      "bytes": 594847
+    },
+    "time/B2_road_scaled/road_levels.parquet": {
+      "sha256": "5d8e2aec4713577a3c7078177231d3c34ccc7175542ec069d246a4e3ad37176d",
+      "bytes": 62473
+    },
+    "time/B2_road_scaled/run_parameters.json": {
+      "sha256": "78c2aa7cd2d77dd52866bf982d042984581fc7e877c54e502550ac41174b17a7",
+      "bytes": 686
+    },
+    "time/B2_road_scaled/subgroup_metrics.csv": {
+      "sha256": "bdb3b4cb75976db9bf34f1905792982682f8052a83eb4951eddc543601618940",
+      "bytes": 4062
+    },
+    "time/B2_road_scaled/test_predictions.parquet": {
+      "sha256": "a00cc87a2cd17602a5bbbd2dd84d72860452157b0968bbda1781a26763a67321",
+      "bytes": 6359581
+    },
+    "time/training_oof_calibration.parquet": {
+      "sha256": "3528008b3c5ca9aae67d08e42646fe8a0042078792a5a427467c01d0bbb64ed4",
+      "bytes": 9040956
+    },
+    "unseen_roads/B1_global/global_profiles.parquet": {
+      "sha256": "4f11d7486005acbed6e15c08ca303cb60261cb4b972cfa71a4e678ccd65877a7",
+      "bytes": 6906
+    },
+    "unseen_roads/B1_global/hour_fallbacks.parquet": {
+      "sha256": "82d8d10a8c8d164af845be2e5f5b34fa4b5f43aa7217bb68cc559184f8b2cf72",
+      "bytes": 3467
+    },
+    "unseen_roads/B1_global/metrics.json": {
+      "sha256": "a908a81aae7ace1ee92812affaa17e06b6d9272a7ef2af461981c5aa676aded1",
+      "bytes": 486
+    },
+    "unseen_roads/B1_global/model.pkl": {
+      "sha256": "6cae6cfa183d2afe5f1b3031607b27639e5066eb44a3df81e03c4d401b59521c",
+      "bytes": 6407
+    },
+    "unseen_roads/B1_global/per_road_metrics.parquet": {
+      "sha256": "518bbdcbe672a51703c3ff567a9eb4d0e4284f62f6bd729dac46ceffd9514ed4",
+      "bytes": 132981
+    },
+    "unseen_roads/B1_global/run_parameters.json": {
+      "sha256": "22c474ac1d5b7a020fcae806212ed359ee92447df9772590aba5ace74d51918b",
+      "bytes": 734
+    },
+    "unseen_roads/B1_global/subgroup_metrics.csv": {
+      "sha256": "7b72f42c54f47604cb3d1288087e5fd8ecfd8d17c1330d82d275d7abdf99baad",
+      "bytes": 3311
+    },
+    "unseen_roads/B1_global/test_predictions.parquet": {
+      "sha256": "e00e8648df4284e65f0e466112d624d88c45146ad21707ed9acc56ed8e8b2937",
+      "bytes": 1938949
+    },
+    "unseen_roads/B2_road_scaled/group_profiles.parquet": {
+      "sha256": "f14a2c8a4851b1afdc427a5e899cbd2257d7f9e8047846e6eee97d05ae99b88f",
+      "bytes": 108754
+    },
+    "unseen_roads/B2_road_scaled/interval_calibration.parquet": {
+      "sha256": "0f57a5e9313329a76127a03a1923f09c81109351dcbd1a3e18ef4654122ec7a1",
+      "bytes": 4893
+    },
+    "unseen_roads/B2_road_scaled/metrics.json": {
+      "sha256": "dcd91e1a18b1b12f4dea2b1e3919ec8ef92c856e7331d89ef685a33ef8fba2f0",
+      "bytes": 484
+    },
+    "unseen_roads/B2_road_scaled/model.pkl": {
+      "sha256": "56acefa0bdad00ad3a3015445ece30efb330962ff08ab616db6dbafc217a5f75",
+      "bytes": 4156429
+    },
+    "unseen_roads/B2_road_scaled/per_road_metrics.parquet": {
+      "sha256": "8ba8b0cb3d8f3ddb67af5f4e4f87570c0bd15802f36181f96b37d5921e160547",
+      "bytes": 141725
+    },
+    "unseen_roads/B2_road_scaled/road_hour_shapes.parquet": {
+      "sha256": "3e9c0f50466a46cca5f8507e7c286f832fa05c20bde72e04c2f1f9c8528f1df7",
+      "bytes": 2193996
+    },
+    "unseen_roads/B2_road_scaled/road_levels.parquet": {
+      "sha256": "6d6decb61a7ee64f7978017daff895847f10b1e0d7ace9dfddff7833ceaef2cb",
+      "bytes": 149260
+    },
+    "unseen_roads/B2_road_scaled/run_parameters.json": {
+      "sha256": "48c8007c216fafda8f05fef8d2c25cbd2b1974aace0efe3ad4f9c235d1b456bb",
+      "bytes": 696
+    },
+    "unseen_roads/B2_road_scaled/subgroup_metrics.csv": {
+      "sha256": "e772a772240e3921c0e57e1c88e4e416144e0f6ac12ac3d959d4c948b0075ab7",
+      "bytes": 3371
+    },
+    "unseen_roads/B2_road_scaled/test_predictions.parquet": {
+      "sha256": "5f2ac3cc5b22692cac3c50795c4de9d71dc7dd708e1986f7d53c3ecb7d040a36",
+      "bytes": 2326860
+    },
+    "unseen_roads/training_oof_calibration.parquet": {
+      "sha256": "9b18c019c7037aa8c1a35a8a838405329b01ef60fb30870a00d8b36783718d93",
+      "bytes": 17203337
+    },
+    "within_road/B1_global/global_profiles.parquet": {
+      "sha256": "e0f93544166b81b95fd37f4f9bc5db8a16abae7263b1fd5de5f91ced2e959968",
+      "bytes": 6901
+    },
+    "within_road/B1_global/hour_fallbacks.parquet": {
+      "sha256": "30d94a76e3f62a89763a855fa9d7fdd942016fbc8c9dc7895f55e560bc6a187a",
+      "bytes": 3478
+    },
+    "within_road/B1_global/metrics.json": {
+      "sha256": "9090fc0072147158e63c318140f532c691df0127b0f381be7d425935a36f98c4",
+      "bytes": 487
+    },
+    "within_road/B1_global/model.pkl": {
+      "sha256": "b9e6d6a96d71263958d28b05185b1d08d486ac1bf63378b6cc84f2682f879db2",
+      "bytes": 6407
+    },
+    "within_road/B1_global/per_road_metrics.parquet": {
+      "sha256": "2fd1310646517543c059b5320a0e77954c0b03122e3b87ba200f98a4f9ea1ce0",
+      "bytes": 427655
+    },
+    "within_road/B1_global/run_parameters.json": {
+      "sha256": "ab20321a67bb3b131a673a0778fd6008c39e80f47a116c56623ddcb663bc04d3",
+      "bytes": 732
+    },
+    "within_road/B1_global/subgroup_metrics.csv": {
+      "sha256": "2b599a9dea49408c8013c176c4134602c302bd3f73dde87ad618ffe8755cc0e7",
+      "bytes": 4115
+    },
+    "within_road/B1_global/test_predictions.parquet": {
+      "sha256": "e02eb03ea493b4b1824a57a879104a6dbdd4d7e864855fc7c95d57a83a3fac17",
+      "bytes": 2161541
+    },
+    "within_road/B2_road_scaled/group_profiles.parquet": {
+      "sha256": "a945dbd723e2697ad4b63342e03136a471e0e29c2ee4414f9422f9966bc13d3f",
+      "bytes": 107789
+    },
+    "within_road/B2_road_scaled/interval_calibration.parquet": {
+      "sha256": "f892dfef17f33374768c0272e959117e07a9555ca422db36b263188777828c6c",
+      "bytes": 4774
+    },
+    "within_road/B2_road_scaled/metrics.json": {
+      "sha256": "18b46a2fb27ec32247c88cb9e21d3ee6436aa0989e46c9d3c9b666489ed6f098",
+      "bytes": 489
+    },
+    "within_road/B2_road_scaled/model.pkl": {
+      "sha256": "669e28d4f6b2dc8d226bb6e1a280717c24d2580c1e2d61ac7f8d91b4015a4dba",
+      "bytes": 4423495
+    },
+    "within_road/B2_road_scaled/per_road_metrics.parquet": {
+      "sha256": "584de9a4099c357fa442374ff88bdfb7a5e9eb93d941bcb49a1a4e9297030e87",
+      "bytes": 536578
+    },
+    "within_road/B2_road_scaled/road_hour_shapes.parquet": {
+      "sha256": "d860cc00df2e7089803eca3fdd4b799fd472c3fd93eeb646acc8b8e1c7ff34b2",
+      "bytes": 2344479
+    },
+    "within_road/B2_road_scaled/road_levels.parquet": {
+      "sha256": "27ff55549eeef940564f581d704dfce06f3e534098192fec72fa39736ef08d26",
+      "bytes": 147067
+    },
+    "within_road/B2_road_scaled/run_parameters.json": {
+      "sha256": "786abbcc7a4aca3e473c458efbe2b3815cfc17781023e55ae6ab7f679ff41efd",
+      "bytes": 694
+    },
+    "within_road/B2_road_scaled/subgroup_metrics.csv": {
+      "sha256": "dab4be1cc0aa72e36547c92e336b461214d42c51e271c4901e890d4ba82206b9",
+      "bytes": 4211
+    },
+    "within_road/B2_road_scaled/test_predictions.parquet": {
+      "sha256": "0dd65b88b65f498d2d003ddc9505bce9b4b3c890c9b4e42e5e9df05f14f38267",
+      "bytes": 9088928
+    },
+    "within_road/training_oof_calibration.parquet": {
+      "sha256": "7ab4bcf5d07944c5921427bd56da704c1e0eda2c5d9bf61a0e4e5f3d638b1c3d",
+      "bytes": 23770077
+    }
+  },
+  "checks": {
+    "frozen_inputs": true,
+    "target_statistics_train_only": true,
+    "grouped_training_calibration": true,
+    "saved_model_prediction_roundtrip": true,
+    "all_eight_mlflow_runs_logged": true
+  }
+}

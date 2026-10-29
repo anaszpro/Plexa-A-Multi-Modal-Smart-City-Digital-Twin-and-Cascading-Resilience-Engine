@@ -26,3 +26,6 @@ frontend/dist/
 /outputs/mobility/mlflow.db*
 /outputs/mobility/mlflow_relocation.json
 /tmp/
+
+# MLflow file-based tracking directories
+mlruns/

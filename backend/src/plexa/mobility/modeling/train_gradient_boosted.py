@@ -16,6 +16,7 @@ import pandas as pd
 
 
 ROOT = Path(__file__).resolve().parents[1]
+PROJECT = ROOT.parents[3]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
@@ -77,8 +78,8 @@ def write_json(path, content):
 
 
 def load_inputs():
-    clean = ROOT / "data/clean"
-    baseline_dir = ROOT / "experiments/baselines_v1"
+    clean = PROJECT / "data/mobility/clean"
+    baseline_dir = PROJECT / "outputs/mobility/baselines_v1"
     paths = {"model": clean / "model_table_v1.parquet", "splits": clean / "model_splits_v1.parquet",
              "model_snapshot": clean / "model_table_v1_snapshot.json",
              "split_snapshot": clean / "model_splits_v1_snapshot.json",
@@ -100,7 +101,7 @@ def load_inputs():
 
 
 def verified_baseline_file(baseline_meta, relative):
-    path = ROOT / "experiments/baselines_v1" / relative
+    path = PROJECT / "outputs/mobility/baselines_v1" / relative
     require(sha256(path) == baseline_meta["files"][relative]["sha256"], f"Baseline artifact changed: {relative}")
     return path
 
@@ -220,7 +221,7 @@ def run(args):
                             staging / "benchmark_checks.json"]
         for record in records:
             tracking.append({"scenario": record["scenario"], "baseline": MODEL_NAME,
-                **log_run(ROOT, record["scenario"], MODEL_NAME, record["params"], record["score"],
+                **log_run(PROJECT, record["scenario"], MODEL_NAME, record["params"], record["score"],
                           record["artifacts"] + common_artifacts,
                           tags={"stage": "gradient_boosted_baseline", "output_version": destination.name,
                                 "test_data_used_for_tuning": "false"})})
@@ -250,7 +251,7 @@ def run(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=ROOT / "experiments/gradient_boosted_v1")
+    parser.add_argument("--output", type=Path, default=PROJECT / "outputs/mobility/gradient_boosted_v1")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--bootstrap", type=int, default=1000)
     run(parser.parse_args())

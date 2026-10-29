@@ -1,0 +1,946 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "scenario_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "operation": {
+      "enum": [
+        "climate.legacy_classify",
+        "safety.classify_311",
+        "safety.classify_text",
+        "mobility.typical_volume"
+      ]
+    },
+    "package_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "request_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/record"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "scenario_id",
+    "run_id",
+    "operation",
+    "package_id",
+    "request_sha256",
+    "records"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:plexa:integration:0.1.0:module-result",
+  "title": "Plexa module result 0.1.0",
+  "$defs": {
+    "record": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "skipped",
+            "error"
+          ]
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 0
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "request_id",
+        "status",
+        "reason_code",
+        "warnings",
+        "result"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "ok"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reason_code": {
+                "type": "null"
+              },
+              "result": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "skipped"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reason_code": {
+                "enum": [
+                  "NOT_SELECTED_BY_RULE",
+                  "BELOW_TEXT_THRESHOLD"
+                ]
+              },
+              "result": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "error"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reason_code": {
+                "enum": [
+                  "INVALID_INPUT",
+                  "MISSING_REQUIRED_FEATURE",
+                  "ASSET_UNAVAILABLE",
+                  "PACKAGE_MISMATCH",
+                  "UNSUPPORTED_CONTEXT",
+                  "INFERENCE_FAILED"
+                ]
+              },
+              "result": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "climate.legacy_classify"
+          }
+        },
+        "required": [
+          "operation"
+        ]
+      },
+      "then": {
+        "properties": {
+          "records": {
+            "items": {
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "status": {
+                        "const": "ok"
+                      }
+                    },
+                    "required": [
+                      "status"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "result": {
+                        "type": "object",
+                        "properties": {
+                          "target": {
+                            "const": "same_stored_hour_sewer_report_proxy"
+                          },
+                          "predicted_class": {
+                            "enum": [
+                              0,
+                              1
+                            ]
+                          },
+                          "class_0_score": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "class_1_score": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "score_calibrated": {
+                            "const": false
+                          },
+                          "prediction_horizon_hours": {
+                            "type": "null"
+                          },
+                          "severity": {
+                            "type": "null"
+                          },
+                          "water_depth_m": {
+                            "type": "null"
+                          }
+                        },
+                        "required": [
+                          "target",
+                          "predicted_class",
+                          "class_0_score",
+                          "class_1_score",
+                          "score_calibrated",
+                          "prediction_horizon_hours",
+                          "severity",
+                          "water_depth_m"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "status": {
+                      "enum": [
+                        "ok",
+                        "error"
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "safety.classify_311"
+          }
+        },
+        "required": [
+          "operation"
+        ]
+      },
+      "then": {
+        "properties": {
+          "records": {
+            "items": {
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "status": {
+                        "const": "ok"
+                      }
+                    },
+                    "required": [
+                      "status"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "result": {
+                        "type": "object",
+                        "properties": {
+                          "hazard_type": {
+                            "enum": [
+                              "flood",
+                              "road_blockage"
+                            ]
+                          },
+                          "severity": {
+                            "const": "medium"
+                          },
+                          "severity_basis": {
+                            "const": "fixed_rule_default"
+                          },
+                          "score": {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "const": "rule_estimate"
+                              },
+                              "value": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                              },
+                              "calibrated": {
+                                "const": false
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "value",
+                              "calibrated"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "rule_id": {
+                            "enum": [
+                              "S311-01",
+                              "S311-02",
+                              "S311-03",
+                              "S311-04",
+                              "S311-05",
+                              "S311-06",
+                              "S311-07",
+                              "S311-08",
+                              "S311-09",
+                              "S311-10"
+                            ]
+                          },
+                          "threshold": {
+                            "type": "null"
+                          },
+                          "verification": {
+                            "const": "unverified"
+                          },
+                          "guidance": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "passage_id": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "pattern": "\\S"
+                                  },
+                                  "similarity": {
+                                    "type": "number",
+                                    "minimum": 0.5,
+                                    "maximum": 1
+                                  },
+                                  "corpus_id": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "pattern": "\\S"
+                                  },
+                                  "embedding_id": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "pattern": "\\S"
+                                  }
+                                },
+                                "required": [
+                                  "passage_id",
+                                  "similarity",
+                                  "corpus_id",
+                                  "embedding_id"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "extracted_location": {
+                            "type": "object",
+                            "properties": {
+                              "location_text": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "pattern": "\\S"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "borough": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "pattern": "\\S"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "latitude": {
+                                "anyOf": [
+                                  {
+                                    "type": "number",
+                                    "minimum": -90,
+                                    "maximum": 90
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "longitude": {
+                                "anyOf": [
+                                  {
+                                    "type": "number",
+                                    "minimum": -180,
+                                    "maximum": 180
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "location_text",
+                              "borough",
+                              "latitude",
+                              "longitude"
+                            ],
+                            "additionalProperties": false,
+                            "allOf": [
+                              {
+                                "if": {
+                                  "properties": {
+                                    "latitude": {
+                                      "const": null
+                                    }
+                                  },
+                                  "required": [
+                                    "latitude"
+                                  ]
+                                },
+                                "then": {
+                                  "properties": {
+                                    "longitude": {
+                                      "type": "null"
+                                    }
+                                  }
+                                },
+                                "else": {
+                                  "properties": {
+                                    "longitude": {
+                                      "type": "number",
+                                      "minimum": -180,
+                                      "maximum": 180
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "hazard_type",
+                          "severity",
+                          "severity_basis",
+                          "score",
+                          "rule_id",
+                          "threshold",
+                          "verification",
+                          "guidance",
+                          "extracted_location"
+                        ],
+                        "additionalProperties": false,
+                        "allOf": [
+                          {
+                            "if": {
+                              "properties": {
+                                "hazard_type": {
+                                  "not": {
+                                    "const": "flood"
+                                  }
+                                }
+                              }
+                            },
+                            "then": {
+                              "properties": {
+                                "guidance": {
+                                  "type": "null"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "status": {
+                        "const": "skipped"
+                      }
+                    },
+                    "required": [
+                      "status"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "reason_code": {
+                        "const": "NOT_SELECTED_BY_RULE"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "safety.classify_text"
+          }
+        },
+        "required": [
+          "operation"
+        ]
+      },
+      "then": {
+        "properties": {
+          "records": {
+            "items": {
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "status": {
+                        "const": "ok"
+                      }
+                    },
+                    "required": [
+                      "status"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "result": {
+                        "type": "object",
+                        "properties": {
+                          "hazard_type": {
+                            "enum": [
+                              "flood",
+                              "road_blockage",
+                              "power_outage",
+                              "unspecified"
+                            ]
+                          },
+                          "severity": {
+                            "enum": [
+                              "medium",
+                              "high"
+                            ]
+                          },
+                          "severity_basis": {
+                            "const": "keyword_heuristic"
+                          },
+                          "score": {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "const": "model_score"
+                              },
+                              "value": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                              },
+                              "calibrated": {
+                                "const": false
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "value",
+                              "calibrated"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "rule_id": {
+                            "type": "null"
+                          },
+                          "threshold": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "verification": {
+                            "const": "unverified"
+                          },
+                          "guidance": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "passage_id": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "pattern": "\\S"
+                                  },
+                                  "similarity": {
+                                    "type": "number",
+                                    "minimum": 0.5,
+                                    "maximum": 1
+                                  },
+                                  "corpus_id": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "pattern": "\\S"
+                                  },
+                                  "embedding_id": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "pattern": "\\S"
+                                  }
+                                },
+                                "required": [
+                                  "passage_id",
+                                  "similarity",
+                                  "corpus_id",
+                                  "embedding_id"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "extracted_location": {
+                            "type": "object",
+                            "properties": {
+                              "location_text": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "pattern": "\\S"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "borough": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "pattern": "\\S"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "latitude": {
+                                "anyOf": [
+                                  {
+                                    "type": "number",
+                                    "minimum": -90,
+                                    "maximum": 90
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "longitude": {
+                                "anyOf": [
+                                  {
+                                    "type": "number",
+                                    "minimum": -180,
+                                    "maximum": 180
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "location_text",
+                              "borough",
+                              "latitude",
+                              "longitude"
+                            ],
+                            "additionalProperties": false,
+                            "allOf": [
+                              {
+                                "if": {
+                                  "properties": {
+                                    "latitude": {
+                                      "const": null
+                                    }
+                                  },
+                                  "required": [
+                                    "latitude"
+                                  ]
+                                },
+                                "then": {
+                                  "properties": {
+                                    "longitude": {
+                                      "type": "null"
+                                    }
+                                  }
+                                },
+                                "else": {
+                                  "properties": {
+                                    "longitude": {
+                                      "type": "number",
+                                      "minimum": -180,
+                                      "maximum": 180
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "hazard_type",
+                          "severity",
+                          "severity_basis",
+                          "score",
+                          "rule_id",
+                          "threshold",
+                          "verification",
+                          "guidance",
+                          "extracted_location"
+                        ],
+                        "additionalProperties": false,
+                        "allOf": [
+                          {
+                            "if": {
+                              "properties": {
+                                "hazard_type": {
+                                  "not": {
+                                    "const": "flood"
+                                  }
+                                }
+                              }
+                            },
+                            "then": {
+                              "properties": {
+                                "guidance": {
+                                  "type": "null"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "status": {
+                        "const": "skipped"
+                      }
+                    },
+                    "required": [
+                      "status"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "reason_code": {
+                        "const": "BELOW_TEXT_THRESHOLD"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "mobility.typical_volume"
+          }
+        },
+        "required": [
+          "operation"
+        ]
+      },
+      "then": {
+        "properties": {
+          "records": {
+            "items": {
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "status": {
+                        "const": "ok"
+                      }
+                    },
+                    "required": [
+                      "status"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "result": {
+                        "type": "object",
+                        "properties": {
+                          "target": {
+                            "const": "typical_hourly_vehicle_volume"
+                          },
+                          "unit": {
+                            "const": "vehicles_per_hour"
+                          },
+                          "direction": {
+                            "enum": [
+                              "EB",
+                              "NB",
+                              "SB",
+                              "WB"
+                            ]
+                          },
+                          "road_type": {
+                            "type": "string",
+                            "minLength": 1,
+                            "pattern": "\\S"
+                          },
+                          "serving_context_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "pattern": "\\S"
+                          },
+                          "p10": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "p50": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "p90": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "nominal_interval_coverage": {
+                            "const": 0.8
+                          },
+                          "coverage_guaranteed": {
+                            "const": false
+                          }
+                        },
+                        "required": [
+                          "target",
+                          "unit",
+                          "direction",
+                          "road_type",
+                          "serving_context_id",
+                          "p10",
+                          "p50",
+                          "p90",
+                          "nominal_interval_coverage",
+                          "coverage_guaranteed"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "status": {
+                      "enum": [
+                        "ok",
+                        "error"
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}

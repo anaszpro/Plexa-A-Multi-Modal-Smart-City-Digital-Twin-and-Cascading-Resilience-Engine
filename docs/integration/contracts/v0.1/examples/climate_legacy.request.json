@@ -1,0 +1,40 @@
+{
+  "schema_version": "0.1.0",
+  "scenario_id": "ida-2021-static-v1",
+  "run_id": "example-climate_legacy-001",
+  "operation": "climate.legacy_classify",
+  "package_id": "climate-legacy-rf-v1-demo",
+  "records": [
+    {
+      "request_id": "climate-ida-example",
+      "source": {
+        "dataset_id": "climate_feature_examples",
+        "snapshot_id": "supplied-example-input-v1",
+        "record_id": "records[1]",
+        "kind": "historical"
+      },
+      "time": {
+        "raw": "2021-09-02T07:00:00",
+        "source_timezone": "unverified_legacy",
+        "utc": null,
+        "resolution": "unresolved"
+      },
+      "location": {
+        "namespace": "legacy_osmid",
+        "native_id": "524603091",
+        "latitude": null,
+        "longitude": null,
+        "location_text": null,
+        "borough": null
+      },
+      "input": {
+        "features": {
+          "elevation_m": 28.88888888888889,
+          "slope": 0.00700037997591119,
+          "rain_mm": 65.0,
+          "rain_24hr_mm": 144.60000032186508
+        }
+      }
+    }
+  ]
+}

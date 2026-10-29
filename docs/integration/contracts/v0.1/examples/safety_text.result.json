@@ -1,0 +1,48 @@
+{
+  "schema_version": "0.1.0",
+  "scenario_id": "ida-2021-static-v1",
+  "run_id": "example-safety_text-001",
+  "operation": "safety.classify_text",
+  "package_id": "safety-combined-v1",
+  "request_sha256": "724f1617c3fb402893fc4cb6f3a12c9d7a7f90615f4da53cec1f7d438a6a8dd5",
+  "records": [
+    {
+      "request_id": "text-1",
+      "status": "ok",
+      "reason_code": null,
+      "warnings": [
+        "ILLUSTRATIVE_SCORE_NOT_EXECUTED",
+        "LOCATION_UNRESOLVED"
+      ],
+      "result": {
+        "hazard_type": "flood",
+        "severity": "medium",
+        "severity_basis": "keyword_heuristic",
+        "score": {
+          "kind": "model_score",
+          "value": 0.723456,
+          "calibrated": false
+        },
+        "rule_id": null,
+        "threshold": 0.45,
+        "verification": "unverified",
+        "guidance": null,
+        "extracted_location": {
+          "location_text": null,
+          "borough": null,
+          "latitude": null,
+          "longitude": null
+        }
+      }
+    },
+    {
+      "request_id": "text-2",
+      "status": "error",
+      "reason_code": "INFERENCE_FAILED",
+      "warnings": [
+        "ILLUSTRATIVE_ERROR_NOT_EXECUTED"
+      ],
+      "result": null
+    }
+  ]
+}

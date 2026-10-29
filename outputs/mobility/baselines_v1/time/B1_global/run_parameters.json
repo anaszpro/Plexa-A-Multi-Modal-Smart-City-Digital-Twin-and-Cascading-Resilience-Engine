@@ -1,0 +1,23 @@
+{
+  "model": "B1_global",
+  "scenario": "time",
+  "seed": 42,
+  "train_rows": 391840,
+  "test_rows": 258867,
+  "weighting": "equal_segment_direction_within_partition",
+  "model_table_sha256": "33f9e12a3db669d4e2ebe1a0b7797b6cca5ffa1b9305ab9d92384a182d84679a",
+  "split_sha256": "230495bab83c61b915c4738d9d4e6c7313d216b62485f01982369d0bcb778862",
+  "target_unit": "vehicles_per_hour",
+  "fit_scale": "log1p",
+  "quantiles": [
+    0.1,
+    0.5,
+    0.9
+  ],
+  "group_prior_roads": "not_applicable",
+  "level_prior_days": "not_applicable",
+  "shape_prior_days": "not_applicable",
+  "interval_method": "weighted_empirical_slot_quantiles",
+  "calibration_folds": 0,
+  "calibration_group": "segment_date"
+}

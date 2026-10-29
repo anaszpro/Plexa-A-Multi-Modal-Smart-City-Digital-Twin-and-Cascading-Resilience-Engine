@@ -1,0 +1,137 @@
+{
+  "feature_columns": [
+    "hour",
+    "dow",
+    "month",
+    "year",
+    "is_weekend",
+    "is_holiday",
+    "holiday_adjacent",
+    "covid",
+    "posted_speed",
+    "number_travel_lanes",
+    "number_park_lanes",
+    "number_total_lanes",
+    "streetwidth_min",
+    "streetwidth_max",
+    "shape_length",
+    "lon",
+    "lat",
+    "direction",
+    "borough",
+    "trafdir",
+    "truck_route_type",
+    "snow_priority",
+    "bikelane",
+    "source",
+    "hour_sin",
+    "hour_cos",
+    "dow_sin",
+    "dow_cos",
+    "month_sin",
+    "month_cos",
+    "history_profile_log",
+    "history_days",
+    "has_history"
+  ],
+  "numeric_features": [
+    "hour",
+    "dow",
+    "month",
+    "year",
+    "is_weekend",
+    "is_holiday",
+    "holiday_adjacent",
+    "covid",
+    "posted_speed",
+    "number_travel_lanes",
+    "number_park_lanes",
+    "number_total_lanes",
+    "streetwidth_min",
+    "streetwidth_max",
+    "shape_length",
+    "lon",
+    "lat"
+  ],
+  "categorical_features": [
+    "direction",
+    "borough",
+    "trafdir",
+    "truck_route_type",
+    "snow_priority",
+    "bikelane",
+    "source"
+  ],
+  "categories": {
+    "direction": [
+      "EB",
+      "NB",
+      "SB",
+      "WB",
+      "__MISSING__"
+    ],
+    "borough": [
+      "Bronx",
+      "Brooklyn",
+      "Manhattan",
+      "Queens",
+      "Staten Island",
+      "__MISSING__"
+    ],
+    "trafdir": [
+      "A",
+      "T",
+      "W",
+      "__MISSING__"
+    ],
+    "truck_route_type": [
+      "0.0",
+      "1.0",
+      "2.0",
+      "3.0",
+      "__MISSING__"
+    ],
+    "snow_priority": [
+      "C",
+      "H",
+      "S",
+      "V",
+      "__MISSING__"
+    ],
+    "bikelane": [
+      "0.0",
+      "1.0",
+      "11.0",
+      "2.0",
+      "3.0",
+      "4.0",
+      "5.0",
+      "6.0",
+      "8.0",
+      "__MISSING__"
+    ],
+    "source": [
+      "__MISSING__",
+      "automated",
+      "historical"
+    ]
+  },
+  "cyclic_features": [
+    "hour_sin",
+    "hour_cos",
+    "dow_sin",
+    "dow_cos",
+    "month_sin",
+    "month_cos"
+  ],
+  "history_features": [
+    "history_profile_log",
+    "history_days",
+    "has_history"
+  ],
+  "target_transform": "log1p(volume)",
+  "output_unit": "vehicles/hour",
+  "quantile_rearrangement": "Sort the three predicted log-quantiles, then clip log>=0 and expm1.",
+  "missing_values": "Preserved as NaN; new categorical values map to missing.",
+  "provenance": "OOF training history; full-training history for inference. No raw road IDs, target values, residuals or full-snapshot coverage as tree features."
+}

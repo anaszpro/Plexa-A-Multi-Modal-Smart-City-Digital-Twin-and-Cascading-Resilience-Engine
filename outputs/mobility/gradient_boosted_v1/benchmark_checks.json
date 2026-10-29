@@ -1,0 +1,15 @@
+{
+  "primary_test": "unseen_roads",
+  "mae_improvement_over_global": 42.82468630886477,
+  "mae_improvement_ci95": [
+    126.22226861189712,
+    180.7438377524153
+  ],
+  "clear_mae_improvement": true,
+  "interval_coverage": 0.7129734764114928,
+  "coverage_target": 0.8,
+  "coverage_tolerance": 0.05,
+  "coverage_in_target_range": false,
+  "both_benchmark_criteria_met": false,
+  "scope": "Pre-agreed benchmark criteria only; not production or citywide validation. No test-based tuning followed."
+}

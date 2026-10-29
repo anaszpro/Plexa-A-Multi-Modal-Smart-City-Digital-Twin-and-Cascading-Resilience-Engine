@@ -1,0 +1,30 @@
+[
+  {
+    "scenario": "within_road",
+    "baseline": "B3_gradient_boosted",
+    "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+    "experiment_id": "1",
+    "run_id": "a358d5b2126d4dc88d10ef89e69f63d4"
+  },
+  {
+    "scenario": "unseen_roads",
+    "baseline": "B3_gradient_boosted",
+    "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+    "experiment_id": "1",
+    "run_id": "c5659753721b4a5aa39b5176426206ca"
+  },
+  {
+    "scenario": "time",
+    "baseline": "B3_gradient_boosted",
+    "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+    "experiment_id": "1",
+    "run_id": "521189375f9145419d3b9dd09809cb14"
+  },
+  {
+    "scenario": "season_transfer",
+    "baseline": "B3_gradient_boosted",
+    "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+    "experiment_id": "1",
+    "run_id": "28ddd094a6dc4e7680c55563dc239edf"
+  }
+]

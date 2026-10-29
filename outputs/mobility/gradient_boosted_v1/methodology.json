@@ -1,0 +1,21 @@
+{
+  "notes": [
+    "The four scenarios are independent experiments on the frozen model_table_v1 and model_splits_v1.",
+    "B3 uses LightGBM quantile regression on log1p(volume), predicting q10/q50/q90. Fixed settings:300 trees,31 leaves, learning_rate0.05,min_child_samples100,lambda1,max_bin127,4 CPU threads.",
+    "There is no parameter search, early stopping or test-based interval calibration. The three log-quantiles are sorted before expm1 to resolve crossings; raw crossing fractions are recorded.",
+    "Each road/direction receives equal training influence. Fit weights are normalized to mean one to keep regularization scale stable. All test metrics use the original equal-road weights.",
+    "History-profile features for training rows come exclusively from saved B2 grouped OOF predictions. Test history comes from B2 fitted only on that scenario's complete training partition. Training history-day counts use each OOF fit subset; test counts use complete training only.",
+    "Calendar, holiday, borough, lane, width, speed, street direction, routing codes, coordinates and observation source are available features. Raw IDs, dates, target values, residuals, and full-snapshot coverage statistics are excluded from the trees.",
+    "Road attributes remain missing when unavailable. Category vocabularies are learned on training rows only; unseen categories map to missing. Native LightGBM missing-value handling is used.",
+    "Source is observation provenance and must be supplied or deliberately defined for future serving. The stored covid flag is a calendar-context indicator, not a causal estimate of pandemic impact.",
+    "The time test is chronological in targets, but LION attributes are from the available release, not point-in-time historical street vintages. It is not a complete historical deployment backtest.",
+    "Season transfer uses17 road/direction/year pairs (15 segments). Autumn is later than the same-year summer test; this is a small retrospective transfer check, not a future forecast.",
+    "Coverage is empirical. A nominal80% interval should cover about80%, but there is no guarantee, especially under changes across years or seasons.",
+    "R2 uses the global equal-road weighted test mean and may be negative. R2 is not accuracy. Subgroup metrics independently rebalance roads inside each subgroup.",
+    "Feature importance is median-model training split gain, not causal influence. Paired MAE confidence intervals resample whole segments with both directions together."
+  ],
+  "seed": 42,
+  "n_estimators": 300,
+  "tuning": "none",
+  "bootstrap_repetitions": 1000
+}

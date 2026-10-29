@@ -1,0 +1,47 @@
+{
+  "schema_version": "0.1.0",
+  "scenario_id": "ida-2021-static-v1",
+  "run_id": "example-safety_311-001",
+  "operation": "safety.classify_311",
+  "package_id": "safety-311-rules-v1",
+  "request_sha256": "e570c12ab4f7dd46293e18c2dbb7d475a80ae5fa4a98fa7f2d201af72b8c2dcf",
+  "records": [
+    {
+      "request_id": "report-1",
+      "status": "ok",
+      "reason_code": null,
+      "warnings": [
+        "SYNTHETIC_EXAMPLE",
+        "GUIDANCE_UNAVAILABLE",
+        "LOCATION_MAPPING_REQUIRED"
+      ],
+      "result": {
+        "hazard_type": "flood",
+        "severity": "medium",
+        "severity_basis": "fixed_rule_default",
+        "score": {
+          "kind": "rule_estimate",
+          "value": 0.9,
+          "calibrated": false
+        },
+        "rule_id": "S311-02",
+        "threshold": null,
+        "verification": "unverified",
+        "guidance": null,
+        "extracted_location": {
+          "location_text": "Illustrative location",
+          "borough": "Queens",
+          "latitude": 40.75,
+          "longitude": -73.9
+        }
+      }
+    },
+    {
+      "request_id": "report-2",
+      "status": "skipped",
+      "reason_code": "NOT_SELECTED_BY_RULE",
+      "warnings": [],
+      "result": null
+    }
+  ]
+}

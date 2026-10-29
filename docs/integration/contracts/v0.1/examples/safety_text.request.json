@@ -1,0 +1,61 @@
+{
+  "schema_version": "0.1.0",
+  "scenario_id": "ida-2021-static-v1",
+  "run_id": "example-safety_text-001",
+  "operation": "safety.classify_text",
+  "package_id": "safety-combined-v1",
+  "records": [
+    {
+      "request_id": "text-1",
+      "source": {
+        "dataset_id": "demo_text",
+        "snapshot_id": "illustrative-fixtures-v1",
+        "record_id": "fixture-text-1",
+        "kind": "synthetic"
+      },
+      "time": {
+        "raw": "2021-09-01T22:00:00",
+        "source_timezone": "America/New_York",
+        "utc": "2021-09-02T02:00:00Z",
+        "resolution": "documented"
+      },
+      "location": {
+        "namespace": "report_location",
+        "native_id": null,
+        "latitude": null,
+        "longitude": null,
+        "location_text": null,
+        "borough": null
+      },
+      "input": {
+        "text": "Illustrative flood report at an unresolved street."
+      }
+    },
+    {
+      "request_id": "text-2",
+      "source": {
+        "dataset_id": "demo_text",
+        "snapshot_id": "illustrative-fixtures-v1",
+        "record_id": "fixture-text-2",
+        "kind": "synthetic"
+      },
+      "time": {
+        "raw": "2021-09-01T22:00:00",
+        "source_timezone": "America/New_York",
+        "utc": "2021-09-02T02:00:00Z",
+        "resolution": "documented"
+      },
+      "location": {
+        "namespace": "report_location",
+        "native_id": null,
+        "latitude": null,
+        "longitude": null,
+        "location_text": null,
+        "borough": null
+      },
+      "input": {
+        "text": "Illustrative report used to demonstrate an unavailable model asset."
+      }
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "schema_version": "0.1.0",
+  "scenario_id": "ida-2021-static-v1",
+  "run_id": "example-safety_311-001",
+  "operation": "safety.classify_311",
+  "package_id": "safety-311-rules-v1",
+  "records": [
+    {
+      "request_id": "report-1",
+      "source": {
+        "dataset_id": "nyc_311",
+        "snapshot_id": "illustrative-fixtures-v1",
+        "record_id": "fixture-report-1",
+        "kind": "synthetic"
+      },
+      "time": {
+        "raw": "2021-09-01T22:00:00",
+        "source_timezone": "America/New_York",
+        "utc": "2021-09-02T02:00:00Z",
+        "resolution": "documented"
+      },
+      "location": {
+        "namespace": "report_location",
+        "native_id": null,
+        "latitude": 40.75,
+        "longitude": -73.9,
+        "location_text": "Illustrative location",
+        "borough": "Queens"
+      },
+      "input": {
+        "complaint_type": "Sewer",
+        "descriptor": "Street Flooding (SJ)"
+      }
+    },
+    {
+      "request_id": "report-2",
+      "source": {
+        "dataset_id": "nyc_311",
+        "snapshot_id": "illustrative-fixtures-v1",
+        "record_id": "fixture-report-2",
+        "kind": "synthetic"
+      },
+      "time": {
+        "raw": "2021-09-01T22:00:00",
+        "source_timezone": "America/New_York",
+        "utc": "2021-09-02T02:00:00Z",
+        "resolution": "documented"
+      },
+      "location": {
+        "namespace": "report_location",
+        "native_id": null,
+        "latitude": null,
+        "longitude": null,
+        "location_text": null,
+        "borough": null
+      },
+      "input": {
+        "complaint_type": "Noise - Residential",
+        "descriptor": "Loud Music/Party"
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "notes": [
+    "These are four independent benchmark experiments. No test data were used to choose parameters.",
+    "B1 uses road-balanced empirical q10/q50/q90 by weekday/hour, with hour and city fallbacks.",
+    "B2 uses log1p volume: borough/lane-group profile shrunk toward B1, a road level, and an observed-hour shape pooled across weekdays.",
+    "Fixed priors: group20 road/direction units, road level2 observed dates, hourly shape3 observed dates. These values were not tuned against test scores.",
+    "B2 q10/q50/q90 use signed log-residual quantiles from three grouped out-of-fold training fits. Residuals are fitted by hour with shrinkage toward pooled residual quantiles.",
+    "Known-road calibration holds out whole segment/date groups while retaining road history; cold-start calibration withholds whole segments.",
+    "Empirical 80% prediction intervals have no formal coverage guarantee. OOF fits use less data than final fits; calibration may not transfer across years or seasons.",
+    "Time-test training ends in2018; test starts in2019 and includes later COVID-era changes.",
+    "Season transfer uses17 road/direction/year pairs (15 segments), full autumn versus same-year full summer days. It is a small retrospective sensitivity test, not a future forecast.",
+    "All road_type values are unspecified. The first two baselines do not use source, holiday or year as predictors; those remain available for the boosted baseline.",
+    "Subgroup metrics recompute equal-road weights within each subgroup; do not average subgroup scores."
+  ],
+  "seed": 42,
+  "calibration_folds": 3,
+  "bootstrap_repetitions": 1000
+}

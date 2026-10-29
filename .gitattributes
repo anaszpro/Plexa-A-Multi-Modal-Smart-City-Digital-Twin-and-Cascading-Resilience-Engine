@@ -1,5 +1,5 @@
 # Preserve reproducible source hashes across Windows and Unix checkouts.
-* text=auto
+* text=auto eol=lf
 *.py text eol=lf
 *.ipynb text eol=lf
 *.md text eol=lf
@@ -13,3 +13,7 @@
 *.dump -text
 *.pdf -text
 *.png -text
+
+# Preserve frozen evaluation files exactly as recorded in their manifests.
+/outputs/mobility/baselines_v1/** -text !eol whitespace=cr-at-eol
+/outputs/mobility/gradient_boosted_v1/** -text !eol whitespace=cr-at-eol

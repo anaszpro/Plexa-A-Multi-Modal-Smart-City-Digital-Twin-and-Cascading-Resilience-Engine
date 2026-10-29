@@ -1,0 +1,31 @@
+{
+  "schema_version": "0.1.0",
+  "scenario_id": "ida-2021-static-v1",
+  "run_id": "example-mobility-001",
+  "operation": "mobility.typical_volume",
+  "package_id": "mobility-illustrative-only",
+  "request_sha256": "7b5c0ade73c43a8b9153c4fc68fd244e855ed815d8faeffafec01dabcac63287",
+  "records": [
+    {
+      "request_id": "volume-1",
+      "status": "ok",
+      "reason_code": null,
+      "warnings": [
+        "ILLUSTRATIVE_PREDICTION_NOT_EXECUTED",
+        "SERVING_PACKAGE_NOT_RELEASED"
+      ],
+      "result": {
+        "target": "typical_hourly_vehicle_volume",
+        "unit": "vehicles_per_hour",
+        "direction": "EB",
+        "road_type": "fixture-road-type",
+        "serving_context_id": "illustrative-context-v1",
+        "p10": 100.0,
+        "p50": 200.0,
+        "p90": 400.0,
+        "nominal_interval_coverage": 0.8,
+        "coverage_guaranteed": false
+      }
+    }
+  ]
+}

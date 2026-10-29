@@ -1,0 +1,294 @@
+{
+  "dataset": "model_table_v1",
+  "created_at_utc": "2026-10-15T00:38:43.113680+00:00",
+  "database_transaction_at_utc": "2026-10-15T00:38:31.272270+00:00",
+  "database": {
+    "host": "127.0.0.1",
+    "port": 5433,
+    "database": "plexa",
+    "isolation": "REPEATABLE READ",
+    "read_only": true,
+    "counts": {
+      "segments": 4488,
+      "hourly": 1428980,
+      "dst": 658,
+      "baseline": 1412050
+    }
+  },
+  "archive_references": [
+    {
+      "path": "data/clean/combined_hourly_v3.parquet",
+      "bytes": 10699056,
+      "rows": 1429638,
+      "sha256": "c26aa5174a5aa2d4eca8d6b96bb4d675b922b0dec3375869a3d58bcc5bf0c7d7"
+    },
+    {
+      "path": "data/clean/segment_table_v4.parquet",
+      "bytes": 565775,
+      "rows": 4488,
+      "sha256": "bfaf5292aedc9d317e1a08bc37c8fb3c2e94f849b77a2defa3d82e56c3587fa4"
+    }
+  ],
+  "local_timezone": "America/New_York",
+  "calendar": {
+    "country": "US",
+    "subdivision": "NY",
+    "observed": true,
+    "categories": [
+      "public"
+    ],
+    "language": "en_US",
+    "populated_years": [
+      1999,
+      2000,
+      2001,
+      2002,
+      2003,
+      2004,
+      2005,
+      2006,
+      2007,
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025,
+      2026,
+      2027
+    ],
+    "adjacent_definition": "Either the previous or next local date is a holiday; may also be true on a holiday.",
+    "scope": "Package US/NY public-holiday calendar; not school holidays or a custom NYC closure/event calendar."
+  },
+  "rows": 1412050,
+  "columns": 48,
+  "segments": 4459,
+  "road_direction_units": 5899,
+  "local_time_range": [
+    "2000-01-01T01:00:00",
+    "2026-02-03T23:00:00"
+  ],
+  "days_observed_per_road": {
+    "min": 1,
+    "median": 9.0,
+    "max": 103
+  },
+  "rows_by_source": {
+    "historical": 968015,
+    "automated": 444035
+  },
+  "rows_by_borough": {
+    "Brooklyn": 393884,
+    "Queens": 377820,
+    "Bronx": 274626,
+    "Manhattan": 252574,
+    "Staten Island": 100333,
+    "nan": 12813
+  },
+  "rows_by_season": {
+    "SON": 944613,
+    "DJF": 186376,
+    "MAM": 179100,
+    "JJA": 101961
+  },
+  "holiday_rows": 46999,
+  "holiday_row_fraction": 0.03328423214475408,
+  "holiday_adjacent_rows": 119821,
+  "road_weight_sum": 5899.000000000002,
+  "missing_road_features": {
+    "borough": {
+      "rows": 12813,
+      "percent": 0.9074
+    },
+    "borough_source": {
+      "rows": 0,
+      "percent": 0.0
+    },
+    "boro_disagreement": {
+      "rows": 0,
+      "percent": 0.0
+    },
+    "lion_key_used": {
+      "rows": 0,
+      "percent": 0.0
+    },
+    "posted_speed": {
+      "rows": 43416,
+      "percent": 3.0747
+    },
+    "number_travel_lanes": {
+      "rows": 30225,
+      "percent": 2.1405
+    },
+    "number_park_lanes": {
+      "rows": 16953,
+      "percent": 1.2006
+    },
+    "number_total_lanes": {
+      "rows": 30462,
+      "percent": 2.1573
+    },
+    "streetwidth_min": {
+      "rows": 30225,
+      "percent": 2.1405
+    },
+    "streetwidth_max": {
+      "rows": 30225,
+      "percent": 2.1405
+    },
+    "shape_length": {
+      "rows": 16953,
+      "percent": 1.2006
+    },
+    "trafdir": {
+      "rows": 18038,
+      "percent": 1.2774
+    },
+    "truck_route_type": {
+      "rows": 16953,
+      "percent": 1.2006
+    },
+    "snow_priority": {
+      "rows": 19770,
+      "percent": 1.4001
+    },
+    "bikelane": {
+      "rows": 16953,
+      "percent": 1.2006
+    },
+    "lon": {
+      "rows": 16953,
+      "percent": 1.2006
+    },
+    "lat": {
+      "rows": 16953,
+      "percent": 1.2006
+    }
+  },
+  "column_dtypes": {
+    "segment_id": "int64",
+    "direction": "category",
+    "road_type": "category",
+    "hour_start_utc": "datetime64[ns, UTC]",
+    "volume": "float64",
+    "source": "category",
+    "study_id": "int64",
+    "orig_interval_min": "int64",
+    "partial_day": "bool",
+    "covid": "bool",
+    "sparse_year": "bool",
+    "baseline_ok": "bool",
+    "identity_conflict": "bool",
+    "borough": "category",
+    "borough_source": "category",
+    "boro_disagreement": "bool",
+    "lion_key_used": "category",
+    "posted_speed": "float64",
+    "number_travel_lanes": "float64",
+    "number_park_lanes": "float64",
+    "number_total_lanes": "float64",
+    "streetwidth_min": "float64",
+    "streetwidth_max": "float64",
+    "shape_length": "float64",
+    "trafdir": "category",
+    "truck_route_type": "float64",
+    "snow_priority": "category",
+    "bikelane": "float64",
+    "lon": "float64",
+    "lat": "float64",
+    "sd": "category",
+    "hour_start": "datetime64[ns]",
+    "date": "object",
+    "hour": "int8",
+    "dow": "int8",
+    "month": "int8",
+    "year": "int16",
+    "season": "category",
+    "is_weekend": "bool",
+    "holiday_name": "string",
+    "is_holiday": "bool",
+    "holiday_adjacent": "bool",
+    "log_volume": "float64",
+    "n_rows_sd": "int32",
+    "n_days_sd": "int32",
+    "n_years_sd": "int32",
+    "n_seasons_sd": "int32",
+    "w_road": "float64"
+  },
+  "targets": [
+    "volume",
+    "log_volume"
+  ],
+  "target_unit": "vehicles/hour",
+  "audit_columns": [
+    "segment_id",
+    "sd",
+    "hour_start_utc",
+    "hour_start",
+    "date",
+    "study_id",
+    "source",
+    "orig_interval_min",
+    "partial_day",
+    "covid",
+    "sparse_year",
+    "baseline_ok",
+    "identity_conflict",
+    "borough_source",
+    "boro_disagreement",
+    "lion_key_used",
+    "road_type",
+    "holiday_name"
+  ],
+  "full_snapshot_bookkeeping_columns": [
+    "n_rows_sd",
+    "n_days_sd",
+    "n_years_sd",
+    "n_seasons_sd",
+    "w_road"
+  ],
+  "leakage_rules": [
+    "No train/test splits or target-derived road-history predictors are created here.",
+    "Coverage columns are full-snapshot diagnostics, not predictors.",
+    "Recompute inverse-road weights separately within each training/evaluation partition.",
+    "Compute all learned road-history features using training/OOF data only.",
+    "Static LION attributes describe the available street-network release, not historical vintages."
+  ],
+  "python_version": "3.13.3",
+  "package_versions": {
+    "pandas": "2.3.2",
+    "numpy": "2.2.6",
+    "pyarrow": "24.0.0",
+    "SQLAlchemy": "2.1.4",
+    "psycopg2-binary": "2.9.13",
+    "holidays": "0.106",
+    "mlflow": null
+  },
+  "builder_sha256": "5627a84cda8b0c7021315822fc499a9cc4d1573670039dc594de77aeab7a3276",
+  "checks": {
+    "expected_rows": true,
+    "eligible_only": true,
+    "unique_local_keys": true,
+    "utc_local_round_trip": true,
+    "finite_nonnegative_targets": true,
+    "equal_total_weight_per_road": true,
+    "missing_road_features_preserved": true
+  },
+  "output": {
+    "path": "data/clean/model_table_v1.parquet",
+    "bytes": 11455818,
+    "sha256": "33f9e12a3db669d4e2ebe1a0b7797b6cca5ffa1b9305ab9d92384a182d84679a"
+  }
+}

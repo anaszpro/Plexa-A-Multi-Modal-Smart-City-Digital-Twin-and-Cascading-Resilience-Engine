@@ -1,0 +1,37 @@
+{
+  "schema_version": "0.1.0",
+  "scenario_id": "ida-2021-static-v1",
+  "run_id": "example-mobility-001",
+  "operation": "mobility.typical_volume",
+  "package_id": "mobility-illustrative-only",
+  "records": [
+    {
+      "request_id": "volume-1",
+      "source": {
+        "dataset_id": "demo_roads",
+        "snapshot_id": "illustrative-fixtures-v1",
+        "record_id": "fixture-road-hour",
+        "kind": "synthetic"
+      },
+      "time": {
+        "raw": "2021-09-01T22:00:00",
+        "source_timezone": "America/New_York",
+        "utc": "2021-09-02T02:00:00Z",
+        "resolution": "documented"
+      },
+      "location": {
+        "namespace": "lion",
+        "native_id": "FIXTURE-LION-001",
+        "latitude": null,
+        "longitude": null,
+        "location_text": null,
+        "borough": null
+      },
+      "input": {
+        "direction": "EB",
+        "road_type": "fixture-road-type",
+        "serving_context_id": "illustrative-context-v1"
+      }
+    }
+  ]
+}

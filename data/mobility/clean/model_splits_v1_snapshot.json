@@ -1,0 +1,521 @@
+{
+  "dataset": "model_splits_v1",
+  "created_at_utc": "2026-10-15T00:54:25.515421+00:00",
+  "input": {
+    "path": "data/clean/model_table_v1.parquet",
+    "sha256": "33f9e12a3db669d4e2ebe1a0b7797b6cca5ffa1b9305ab9d92384a182d84679a",
+    "rows": 1412050,
+    "snapshot_path": "data/clean/model_table_v1_snapshot.json",
+    "snapshot_sha256": "c7c0e9a8877d8af3055f32e66babcb44067a5f3f9206cfab8b427c408ea9e9a3"
+  },
+  "seed": 42,
+  "nominal_test_fraction": 0.2,
+  "time_last_training_year": 2018,
+  "time_cutoff_reason": "2018 retains broad repeat-road coverage before the historical archive ends. Chosen using date coverage, without reading targets.",
+  "definitions": {
+    "within_road": "Random held-out local dates per segment, shared across directions; at least 3 training dates and 1 test date per road/direction; otherwise excluded.",
+    "unseen_roads": "Approximately 20% of whole segments withheld, stratified by borough with missing borough as a separate stratum; every direction and date stays together.",
+    "time": "Matched road/direction units only; train through 2018, test from 2019; at least 3 observed dates on each side.",
+    "season_transfer": "Matched road/direction/year pairs with >=3 full 24-hour days in each season. Only full autumn days train and full summer days test. Restricted paired-cohort sensitivity test; not a chronological forecast."
+  },
+  "minimum_training_observed_dates": 3,
+  "minimum_time_test_observed_dates": 3,
+  "minimum_full_days_per_season": 3,
+  "season_transfer_pairs": [
+    {
+      "sd": "105995|NB",
+      "year": 2010,
+      "autumn_full_days": 9,
+      "summer_full_days": 3
+    },
+    {
+      "sd": "110808|NB",
+      "year": 2016,
+      "autumn_full_days": 4,
+      "summer_full_days": 9
+    },
+    {
+      "sd": "110808|SB",
+      "year": 2016,
+      "autumn_full_days": 4,
+      "summer_full_days": 9
+    },
+    {
+      "sd": "116770|EB",
+      "year": 2012,
+      "autumn_full_days": 5,
+      "summer_full_days": 29
+    },
+    {
+      "sd": "132626|EB",
+      "year": 2020,
+      "autumn_full_days": 7,
+      "summer_full_days": 5
+    },
+    {
+      "sd": "132626|WB",
+      "year": 2020,
+      "autumn_full_days": 7,
+      "summer_full_days": 5
+    },
+    {
+      "sd": "138592|SB",
+      "year": 2020,
+      "autumn_full_days": 6,
+      "summer_full_days": 7
+    },
+    {
+      "sd": "171271|SB",
+      "year": 2019,
+      "autumn_full_days": 5,
+      "summer_full_days": 8
+    },
+    {
+      "sd": "2269|SB",
+      "year": 2012,
+      "autumn_full_days": 4,
+      "summer_full_days": 23
+    },
+    {
+      "sd": "29467|EB",
+      "year": 2010,
+      "autumn_full_days": 9,
+      "summer_full_days": 3
+    },
+    {
+      "sd": "29473|WB",
+      "year": 2010,
+      "autumn_full_days": 8,
+      "summer_full_days": 3
+    },
+    {
+      "sd": "29474|SB",
+      "year": 2010,
+      "autumn_full_days": 9,
+      "summer_full_days": 3
+    },
+    {
+      "sd": "35868|NB",
+      "year": 2017,
+      "autumn_full_days": 3,
+      "summer_full_days": 4
+    },
+    {
+      "sd": "45028|NB",
+      "year": 2020,
+      "autumn_full_days": 4,
+      "summer_full_days": 10
+    },
+    {
+      "sd": "66424|WB",
+      "year": 2020,
+      "autumn_full_days": 4,
+      "summer_full_days": 10
+    },
+    {
+      "sd": "8070|WB",
+      "year": 2016,
+      "autumn_full_days": 4,
+      "summer_full_days": 10
+    },
+    {
+      "sd": "8127|EB",
+      "year": 2016,
+      "autumn_full_days": 4,
+      "summer_full_days": 10
+    }
+  ],
+  "summaries": {
+    "within_road": {
+      "train": {
+        "rows": 1067162,
+        "segments": 3453,
+        "road_direction_units": 4671,
+        "road_direction_days": 46383,
+        "local_date_range": [
+          "2000-01-01",
+          "2026-02-02"
+        ],
+        "weight_sum": 4671.000000000002,
+        "rows_by_borough": {
+          "Brooklyn": 297288,
+          "Queens": 285344,
+          "Bronx": 206985,
+          "Manhattan": 191490,
+          "Staten Island": 76164,
+          "unknown": 9891
+        },
+        "rows_by_source": {
+          "historical": 746648,
+          "automated": 320514
+        },
+        "rows_by_season": {
+          "SON": 725062,
+          "DJF": 136741,
+          "MAM": 131691,
+          "JJA": 73668
+        }
+      },
+      "test": {
+        "rows": 312488,
+        "segments": 3453,
+        "road_direction_units": 4671,
+        "road_direction_days": 13600,
+        "local_date_range": [
+          "2000-01-02",
+          "2026-02-01"
+        ],
+        "weight_sum": 4670.999999999999,
+        "rows_by_borough": {
+          "Brooklyn": 86414,
+          "Queens": 83711,
+          "Bronx": 61773,
+          "Manhattan": 55644,
+          "Staten Island": 22024,
+          "unknown": 2922
+        },
+        "rows_by_source": {
+          "historical": 215255,
+          "automated": 97233
+        },
+        "rows_by_season": {
+          "SON": 208357,
+          "DJF": 43078,
+          "MAM": 38634,
+          "JJA": 22419
+        }
+      },
+      "excluded": {
+        "rows": 32400,
+        "segments": 1109,
+        "road_direction_units": 1228,
+        "road_direction_days": 2284,
+        "local_date_range": [
+          "2006-11-04",
+          "2026-02-03"
+        ],
+        "weight_sum": 0.0,
+        "rows_by_borough": {
+          "Brooklyn": 10182,
+          "Queens": 8765,
+          "Bronx": 5868,
+          "Manhattan": 5440,
+          "Staten Island": 2145
+        },
+        "rows_by_source": {
+          "automated": 26288,
+          "historical": 6112
+        },
+        "rows_by_season": {
+          "SON": 11194,
+          "MAM": 8775,
+          "DJF": 6557,
+          "JJA": 5874
+        }
+      }
+    },
+    "unseen_roads": {
+      "train": {
+        "rows": 1130186,
+        "segments": 3567,
+        "road_direction_units": 4724,
+        "road_direction_days": 49829,
+        "local_date_range": [
+          "2000-01-01",
+          "2026-02-03"
+        ],
+        "weight_sum": 4724.0,
+        "rows_by_borough": {
+          "Brooklyn": 314084,
+          "Queens": 300963,
+          "Bronx": 219982,
+          "Manhattan": 205776,
+          "Staten Island": 79242,
+          "unknown": 10139
+        },
+        "rows_by_source": {
+          "historical": 781220,
+          "automated": 348966
+        },
+        "rows_by_season": {
+          "SON": 762176,
+          "MAM": 146341,
+          "DJF": 143840,
+          "JJA": 77829
+        }
+      },
+      "test": {
+        "rows": 281864,
+        "segments": 892,
+        "road_direction_units": 1175,
+        "road_direction_days": 12438,
+        "local_date_range": [
+          "2006-09-05",
+          "2026-02-03"
+        ],
+        "weight_sum": 1175.0000000000002,
+        "rows_by_borough": {
+          "Brooklyn": 79800,
+          "Queens": 76857,
+          "Bronx": 54644,
+          "Manhattan": 46798,
+          "Staten Island": 21091,
+          "unknown": 2674
+        },
+        "rows_by_source": {
+          "historical": 186795,
+          "automated": 95069
+        },
+        "rows_by_season": {
+          "SON": 182437,
+          "DJF": 42536,
+          "MAM": 32759,
+          "JJA": 24132
+        }
+      },
+      "excluded": {
+        "rows": 0,
+        "segments": 0,
+        "road_direction_units": 0,
+        "road_direction_days": 0,
+        "local_date_range": null,
+        "weight_sum": 0.0,
+        "rows_by_borough": {},
+        "rows_by_source": {
+          "automated": 0,
+          "historical": 0
+        },
+        "rows_by_season": {
+          "DJF": 0,
+          "JJA": 0,
+          "MAM": 0,
+          "SON": 0
+        }
+      }
+    },
+    "time": {
+      "train": {
+        "rows": 391840,
+        "segments": 775,
+        "road_direction_units": 1154,
+        "road_direction_days": 16696,
+        "local_date_range": [
+          "2007-04-02",
+          "2018-12-24"
+        ],
+        "weight_sum": 1154.0,
+        "rows_by_borough": {
+          "Brooklyn": 108225,
+          "Queens": 100120,
+          "Manhattan": 81753,
+          "Bronx": 71274,
+          "Staten Island": 28525,
+          "unknown": 1943
+        },
+        "rows_by_source": {
+          "historical": 350296,
+          "automated": 41544
+        },
+        "rows_by_season": {
+          "SON": 304610,
+          "MAM": 43776,
+          "DJF": 37625,
+          "JJA": 5829
+        }
+      },
+      "test": {
+        "rows": 258867,
+        "segments": 775,
+        "road_direction_units": 1154,
+        "road_direction_days": 10836,
+        "local_date_range": [
+          "2019-01-04",
+          "2026-01-09"
+        ],
+        "weight_sum": 1154.0,
+        "rows_by_borough": {
+          "Queens": 66078,
+          "Brooklyn": 65958,
+          "Manhattan": 56963,
+          "Bronx": 46053,
+          "Staten Island": 21872,
+          "unknown": 1943
+        },
+        "rows_by_source": {
+          "historical": 225131,
+          "automated": 33736
+        },
+        "rows_by_season": {
+          "SON": 229973,
+          "MAM": 20365,
+          "DJF": 5295,
+          "JJA": 3234
+        }
+      },
+      "excluded": {
+        "rows": 761343,
+        "segments": 3758,
+        "road_direction_units": 4745,
+        "road_direction_days": 34735,
+        "local_date_range": [
+          "2000-01-01",
+          "2026-02-03"
+        ],
+        "weight_sum": 0.0,
+        "rows_by_borough": {
+          "Brooklyn": 219701,
+          "Queens": 211622,
+          "Bronx": 157299,
+          "Manhattan": 113858,
+          "Staten Island": 49936,
+          "unknown": 8927
+        },
+        "rows_by_source": {
+          "historical": 392588,
+          "automated": 368755
+        },
+        "rows_by_season": {
+          "SON": 410030,
+          "DJF": 143456,
+          "MAM": 114959,
+          "JJA": 92898
+        }
+      }
+    },
+    "season_transfer": {
+      "train": {
+        "rows": 2304,
+        "segments": 15,
+        "road_direction_units": 17,
+        "road_direction_days": 96,
+        "local_date_range": [
+          "2010-09-01",
+          "2020-09-18"
+        ],
+        "weight_sum": 17.0,
+        "rows_by_borough": {
+          "Brooklyn": 1272,
+          "Staten Island": 480,
+          "Queens": 480,
+          "Manhattan": 72
+        },
+        "rows_by_source": {
+          "automated": 2304,
+          "historical": 0
+        },
+        "rows_by_season": {
+          "SON": 2304,
+          "DJF": 0,
+          "JJA": 0,
+          "MAM": 0
+        }
+      },
+      "test": {
+        "rows": 3624,
+        "segments": 15,
+        "road_direction_units": 17,
+        "road_direction_days": 151,
+        "local_date_range": [
+          "2010-08-27",
+          "2020-08-31"
+        ],
+        "weight_sum": 17.0,
+        "rows_by_borough": {
+          "Staten Island": 1464,
+          "Queens": 1296,
+          "Brooklyn": 768,
+          "Manhattan": 96
+        },
+        "rows_by_source": {
+          "automated": 3624,
+          "historical": 0
+        },
+        "rows_by_season": {
+          "JJA": 3624,
+          "DJF": 0,
+          "MAM": 0,
+          "SON": 0
+        }
+      },
+      "excluded": {
+        "rows": 1406122,
+        "segments": 4456,
+        "road_direction_units": 5893,
+        "road_direction_days": 62020,
+        "local_date_range": [
+          "2000-01-01",
+          "2026-02-03"
+        ],
+        "weight_sum": 0.0,
+        "rows_by_borough": {
+          "Brooklyn": 391844,
+          "Queens": 376044,
+          "Bronx": 274626,
+          "Manhattan": 252406,
+          "Staten Island": 98389,
+          "unknown": 12813
+        },
+        "rows_by_source": {
+          "historical": 968015,
+          "automated": 438107
+        },
+        "rows_by_season": {
+          "SON": 942309,
+          "DJF": 186376,
+          "MAM": 179100,
+          "JJA": 98337
+        }
+      }
+    }
+  },
+  "column_dtypes": {
+    "model_row": "int64",
+    "segment_id": "int64",
+    "direction": "category",
+    "road_type": "category",
+    "hour_start_utc": "datetime64[ns, UTC]",
+    "split_within_road": "category",
+    "w_within_road": "float64",
+    "split_unseen_roads": "category",
+    "w_unseen_roads": "float64",
+    "split_time": "category",
+    "w_time": "float64",
+    "split_season_transfer": "category",
+    "w_season_transfer": "float64"
+  },
+  "builder_sha256": "a64b097b1984ef44dbc1f692e37004e01c929eb3150128050823a1e8ebdd324b",
+  "package_versions": {
+    "numpy": "2.2.6",
+    "pandas": "2.3.2",
+    "pyarrow": "24.0.0"
+  },
+  "training_rules": [
+    "Each scenario is an independent experiment. Never combine their assignments into one split.",
+    "Join assignments to the parent modelling dataset on the four key columns, one-to-one.",
+    "model_row is a convenience offset for this exact input file, not a model feature.",
+    "Use split_<scenario> and w_<scenario>; excluded rows have zero weight and must be removed.",
+    "Weights sum to one per road/direction separately within train and test.",
+    "Never use n_rows_sd/n_days_sd/n_years_sd/n_seasons_sd/w_road from the full snapshot as predictors.",
+    "All target encodings, imputation and learned transforms must fit on training data only.",
+    "Road-history predictors for training rows must be out-of-fold, grouped by whole days; all directions of a segment/date must share a fold. Cold-start validation requires segment folds.",
+    "Do not tune or calibrate intervals on test rows. Use grouped folds inside training data.",
+    "Unseen-segment performance does not establish transfer to entirely unseen corridors or regions.",
+    "Within-road and season-transfer results do not establish forecasting performance."
+  ],
+  "checks": {
+    "source_fingerprint": true,
+    "whole_days": true,
+    "unseen_segments_disjoint": true,
+    "time_chronological": true,
+    "season_pairs_and_full_days": true,
+    "partition_road_weights": true,
+    "every_row_reconciled": true,
+    "targets_not_read": true
+  },
+  "output": {
+    "path": "data/clean/model_splits_v1.parquet",
+    "sha256": "230495bab83c61b915c4738d9d4e6c7313d216b62485f01982369d0bcb778862",
+    "bytes": 5293875,
+    "rows": 1412050
+  }
+}

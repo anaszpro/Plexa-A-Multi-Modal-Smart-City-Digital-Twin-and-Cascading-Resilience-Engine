@@ -16,6 +16,7 @@ import pandas as pd
 
 
 ROOT = Path(__file__).resolve().parents[1]
+PROJECT = ROOT.parents[3]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
@@ -70,7 +71,7 @@ def write_json(path, content):
 
 
 def load_inputs():
-    clean = ROOT / "data/clean"
+    clean = PROJECT / "data/mobility/clean"
     model_path, split_path = clean / "model_table_v1.parquet", clean / "model_splits_v1.parquet"
     model_snapshot = clean / "model_table_v1_snapshot.json"
     split_snapshot = clean / "model_splits_v1_snapshot.json"
@@ -206,7 +207,7 @@ def run(args):
             common_artifacts = parent_paths + [staging / "baseline_report.md", staging / "methodology.json",
                                                staging / "baseline_comparison.png"]
             tracking.append({"scenario": record["scenario"], "baseline": record["model_name"],
-                **log_run(ROOT, record["scenario"], record["model_name"], record["params"],
+                **log_run(PROJECT, record["scenario"], record["model_name"], record["params"],
                           record["metrics"], record["artifacts"] + common_artifacts,
                           tags={"stage": "initial_baselines", "output_version": destination.name,
                                 "test_data_used_for_tuning": "false"})})
@@ -240,7 +241,7 @@ def run(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=ROOT / "experiments/baselines_v1")
+    parser.add_argument("--output", type=Path, default=PROJECT / "outputs/mobility/baselines_v1")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--bootstrap", type=int, default=1000)
     run(parser.parse_args())

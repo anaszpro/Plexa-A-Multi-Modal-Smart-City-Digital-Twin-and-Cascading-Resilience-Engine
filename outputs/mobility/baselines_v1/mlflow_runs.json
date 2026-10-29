@@ -1,0 +1,58 @@
+[
+  {
+    "scenario": "within_road",
+    "baseline": "B1_global",
+    "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+    "experiment_id": "1",
+    "run_id": "dd1e9f69be464893afb3be40c1646ced"
+  },
+  {
+    "scenario": "within_road",
+    "baseline": "B2_road_scaled",
+    "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+    "experiment_id": "1",
+    "run_id": "32f08c62eda44d6e81cf2cca3936e163"
+  },
+  {
+    "scenario": "unseen_roads",
+    "baseline": "B1_global",
+    "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+    "experiment_id": "1",
+    "run_id": "0b8f8f3a454a469fa022a01da68b66da"
+  },
+  {
+    "scenario": "unseen_roads",
+    "baseline": "B2_road_scaled",
+    "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+    "experiment_id": "1",
+    "run_id": "612308511ac5469cbdef861fcc498579"
+  },
+  {
+    "scenario": "time",
+    "baseline": "B1_global",
+    "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+    "experiment_id": "1",
+    "run_id": "916f788f59e14c608bf368aa7932d2d0"
+  },
+  {
+    "scenario": "time",
+    "baseline": "B2_road_scaled",
+    "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+    "experiment_id": "1",
+    "run_id": "b55ce4b97fd54d3289c54346170cac27"
+  },
+  {
+    "scenario": "season_transfer",
+    "baseline": "B1_global",
+    "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+    "experiment_id": "1",
+    "run_id": "d5284f76d283477ba5267166b6066cd3"
+  },
+  {
+    "scenario": "season_transfer",
+    "baseline": "B2_road_scaled",
+    "tracking_uri": "sqlite:///C:/Users/anasz/Desktop/uni bitch/FYP shi/experiments/mlflow.db",
+    "experiment_id": "1",
+    "run_id": "b56523e224c94770a4be6aa4521a473e"
+  }
+]
