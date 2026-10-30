@@ -46,7 +46,8 @@ def choose_roads(static, weather, geometry_ids, per_borough):
     return chosen
 
 
-def build(bundle, destination, per_borough):
+def build(bundle, destination, per_borough, *, road_selector=None,
+          candidate_finalizer=None, request_id_prefix="ida"):
     predictor = ClimateHistoryPredictor(bundle)
     manifest = predictor.manifest
     release_config_path = ROOT / "config/climate_history_release_v3_02.json"
@@ -87,7 +88,9 @@ def build(bundle, destination, per_borough):
     weather = pd.read_parquet(weather_path, filters=[
         ("prediction_time_utc", ">=", START.to_pydatetime()),
         ("prediction_time_utc", "<", END.to_pydatetime())])
-    chosen = choose_roads(static, weather, geometry.loc[valid_geometry, "street_segment_id"], per_borough)
+    geometry_ids = geometry.loc[valid_geometry, "street_segment_id"]
+    chosen = (choose_roads(static, weather, geometry_ids, per_borough)
+              if road_selector is None else road_selector(static, weather, geometry_ids))
     base = predictor.base_features
     if not all(name.replace("_", "").isalnum() for name in base):
         raise ValueError("Unexpected feature names")
@@ -112,7 +115,7 @@ def build(bundle, destination, per_borough):
     rows["prediction_time_utc"] = pd.to_datetime(rows.prediction_time_utc, utc=True)
     if not np.isfinite(rows[base].to_numpy(dtype=float)).all():
         raise ValueError("Nonfinite selected features")
-    rows["request_id"] = [f"ida:{segment}:{timestamp:%Y%m%dT%H%M%SZ}"
+    rows["request_id"] = [f"{request_id_prefix}:{segment}:{timestamp:%Y%m%dT%H%M%SZ}"
                           for segment,timestamp in zip(rows.street_segment_id, rows.prediction_time_utc)]
     request = {"format_version": FORMAT, "package_id": manifest["package_id"], "records": [{
         "request_id": row.request_id, "street_segment_id": row.street_segment_id,
@@ -244,6 +247,8 @@ The absence of model alerts must remain visible; do not lower the threshold or
 select different roads merely to produce a dramatic demonstration.
 '''
         (temporary / "README.md").write_text(readme)
+        if candidate_finalizer is not None:
+            candidate_finalizer(temporary, summary, rows, chosen)
         summary["files"] = {p.name: sha256(p) for p in sorted(temporary.iterdir())}
         write_json(temporary / "candidate_manifest.json", summary)
         # Replay before publishing the complete directory.
