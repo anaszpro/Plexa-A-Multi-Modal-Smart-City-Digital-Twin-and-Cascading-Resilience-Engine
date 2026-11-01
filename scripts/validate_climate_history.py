@@ -234,7 +234,8 @@ def run(args):
     for name in builder.feature_names:
         lookup[name] = transformed[name].to_numpy()
     edges = np.unique(np.concatenate(([0.0], np.geomspace(1e-12, 1.0, 4096))))
-    report_path = ROOT / "data/processed/baseline_pretraining_report.json"
+    report_path = ROOT / checkpoint.get("pretraining_report_project_path",
+                                        "data/processed/baseline_pretraining_report.json")
     if sha256(report_path) != checkpoint["preparation_evidence_sha256"]["pretraining_report"]:
         raise ValueError("Preparation report changed")
     preparation_report = json.loads(report_path.read_text())
@@ -264,7 +265,7 @@ def run(args):
             "score_bins": "unique([0] + geomspace(1e-12, 1, 4096))",
             "threshold_selection": "maximum_F1_then_fewest_alerts_then_highest_threshold",
             "AP": "global_grouped_score_approximation_not_mean_batch_AP",
-            "population": "natural_eligible_2025_reused_development",
+            "population": experiment.get("evaluation_population", "natural_eligible_2025_reused_development"),
             "history_cutoff_utc": train_end.isoformat(), "test_data_queried": False}
         output.mkdir(parents=True, exist_ok=True)
         write_once(output / "evaluation_plan.json", json_text(plan))

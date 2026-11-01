@@ -1,0 +1,176 @@
+{
+  "proposal_id": "climate-pre2024-temporal-proposal-v2",
+  "status": "pending_Anas_temporal_settings_review_not_frozen_not_fitted",
+  "supersedes": "December-2022-cutoff proposal in pre2024-mobility-assessment-v1; preserve original evidence",
+  "agreed_scope": {
+    "physical_mobility_roads": 441,
+    "mobility_contexts": 666,
+    "native_segments": 441,
+    "selection": "single_native_candidate excluding all shared-native relationships",
+    "pending_split_roads": [
+      "113476",
+      "33018",
+      "70704",
+      "78177",
+      "79377",
+      "91014"
+    ],
+    "pending_shared_native_roads": [
+      "145550",
+      "51124"
+    ],
+    "other_pending_roads": 251,
+    "original_geometry_exclusions": 3,
+    "pending_cases_evidence": "preserved_unchanged"
+  },
+  "fitting_geography": "citywide eligible native segments, as previous baseline; 441-road agreement limits serving/export coverage, not training examples",
+  "target": "reported_street_or_highway_flooding_next_hour",
+  "label_unit": "physical_segment_hour; target interval [t,t+1 hour)",
+  "training": {
+    "prediction_start_inclusive": "2020-10-14T04:00:00Z",
+    "prediction_end_exclusive": "2023-06-24T04:00:00Z",
+    "labels_available_by": "2023-07-01T04:00:00Z",
+    "eligible_positive_rows": 7843,
+    "eligible_negative_rows": 2085091198
+  },
+  "development": {
+    "prediction_start_inclusive": "2023-07-01T04:00:00Z",
+    "prediction_end_exclusive": "2023-12-25T05:00:00Z",
+    "labels_available_by": "2024-01-01T05:00:00Z",
+    "eligible_positive_rows": 2087,
+    "eligible_negative_rows": 375113967
+  },
+  "availability_policy": {
+    "label_delay_days_assumed": 7,
+    "label_eligibility_rule": "t + 1 hour + 7 days <= partition labels_available_by",
+    "final_freeze_utc": "2024-01-01T05:00:00Z",
+    "historical_publication_and_revision_times_verified": false,
+    "source": "existing verified retrospective snapshot, no recreated historical source vintage"
+  },
+  "training_sampling": {
+    "retain_all_eligible_positives": true,
+    "negative_keep_fraction": 0.0002,
+    "seed": "plexa-baseline-v1",
+    "hash_expression": "md5_number_lower(street_segment_id || '|' || epoch(prediction_time_utc)::VARCHAR || 'plexa-baseline-v1')",
+    "negative_keep_rule": "hash_expression % 5000 = 0",
+    "positive_weight": 1.0,
+    "negative_weight": 5000.0,
+    "weight_normalization": false,
+    "additional_balanced_class_weights": false,
+    "actual_sample_counts": "to_be_measured_after_approval",
+    "rainfall_stratified_sampling_experiment": "paused_not_used"
+  },
+  "history": {
+    "policy": "fixed_training_cutoff_context_with_past_only_construction",
+    "source": "all citywide eligible training positive segment-hours in proposed training interval",
+    "event_count": 7843,
+    "delay_days": 7,
+    "lookback_days": 365,
+    "cutoff_formula": "min(t - 7 days, training_end)",
+    "interval_formula": "[cutoff - 365 days, cutoff)",
+    "development_outcomes_in_pool": false,
+    "2024_outcomes_in_pool": false,
+    "replay_bounds": [
+      {
+        "prediction_time": "2024-01-01T05:00:00Z",
+        "window_start_inclusive": "2022-06-24T04:00:00Z",
+        "window_end_exclusive": "2023-06-24T04:00:00Z"
+      },
+      {
+        "prediction_time": "2025-01-01T04:00:00Z",
+        "window_start_inclusive": "2022-06-24T04:00:00Z",
+        "window_end_exclusive": "2023-06-24T04:00:00Z"
+      }
+    ],
+    "feature_names": [
+      "segment_positive_hours_365d",
+      "cell_positive_hours_365d"
+    ],
+    "cold_start": "zero eligible historical counts; not evidence of missing input or no flooding",
+    "pool_status": "proposed_definition_and_count; new runtime asset not yet frozen"
+  },
+  "model": {
+    "family": "HistGradientBoostingClassifier",
+    "features": [
+      "elevation_mean_m",
+      "terrain_endpoint_grade_abs",
+      "terrain_relief_m",
+      "length_m",
+      "rain_1h_mm",
+      "rain_3h_mm",
+      "rain_6h_mm",
+      "rain_24h_mm",
+      "segment_positive_hours_365d",
+      "cell_positive_hours_365d"
+    ],
+    "initial_reference_parameters_for_review": {
+      "loss": "log_loss",
+      "learning_rate": 0.1,
+      "max_iter": 100,
+      "max_leaf_nodes": 15,
+      "min_samples_leaf": 100,
+      "l2_regularization": 1000.0,
+      "early_stopping": false,
+      "class_weight": null,
+      "random_state": 42
+    },
+    "learned_preprocessing": "fit on training only if introduced; none added for initial tree",
+    "threshold_selection": "maximum pre-2024 development F1; ties fewest alerts then highest threshold",
+    "development_evaluation": "complete eligible natural-prevalence population; streamed score-bin approximation documented",
+    "report_metrics": [
+      "approximate_AP",
+      "precision",
+      "recall",
+      "F1",
+      "TP",
+      "FP",
+      "FN",
+      "TN",
+      "alerts_per_24h"
+    ],
+    "old_threshold_transfer": false,
+    "refit_with_development_outcomes_after_selection": false,
+    "score_calibrated": false,
+    "initial_parameters_inherited_from_prior_exploration": true,
+    "2024_previously_examined": "not a pristine independent holdout; no 2024 outcomes in this fit/tuning/history"
+  },
+  "scenario": {
+    "start_utc_inclusive": "2024-01-01T05:00:00Z",
+    "end_utc_exclusive": "2025-01-01T05:00:00Z",
+    "prediction_starts": 8784,
+    "rainfall_lag_hours_assumed": 3,
+    "missing_prediction_range_utc_inclusive_exclusive": [
+      "2024-03-19T20:00:00Z",
+      "2024-03-20T22:00:00Z"
+    ],
+    "missing_prediction_hours": 26,
+    "missing_inputs": "unavailable_never_zero_fill",
+    "normalized_inputs": "after fit/runtime verification for approved scope"
+  },
+  "Ida": "separate replay; preserve existing release/results; version any new model outputs",
+  "blockers_and_next_checks": [
+    "Anas temporal proposal approval before freeze/fitting",
+    "full pre-2024 preparation provenance/input review before final fit; exact counts were measured on current eligible views",
+    "sampling counts, feature checks and history tests after materializing the new training sample",
+    "split-gap rainfall-event separation review before experiment freeze",
+    "no current known input blocker for approved serving scope beyond retained March gap"
+  ],
+  "delivery_estimate": {
+    "after_temporal_settings_approval": "approximately 1 working day (6-10 active hours); allow 2 working days if data/runtime checks require repair",
+    "milestones": {
+      "freeze_and_data_checks": "2-3 hours",
+      "fit_and_development_evaluation": "1-2 hours",
+      "runtime_normalized_export_and_verification": "3-5 hours"
+    },
+    "type": "planning_estimate_not_guaranteed; excludes external review waiting time"
+  },
+  "provenance": {
+    "dataset_manifest_sha256": "234b8bd82e567d21d0674b31c7eeff1c573230ea33543c4a160d967d4e9ece3a",
+    "history_helper_sha256": "24e37752814e5c903f35ea5861047ba8719a675b8b49c91cbcbf464053b49e29",
+    "reference_settings_sha256": "781708bc2c8439e5ce985bdcf143c4097d649a09bcd03903ff79f92c97fba600",
+    "original_assessment_manifest_sha256": "1714d620bc7be2d371d8319253ca213e4720ef5c497dd485a4ce7fe0eaf2872b",
+    "count_method": "read-only eligible-view counts by explicit timestamps and target-end availability; no original split-label filter",
+    "all_prepared_sources_rehashed_during_this_proposal": false
+  },
+  "new_model_fitted": false
+}

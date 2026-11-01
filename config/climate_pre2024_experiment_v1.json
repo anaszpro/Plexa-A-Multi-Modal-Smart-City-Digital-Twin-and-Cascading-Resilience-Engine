@@ -1,0 +1,156 @@
+{
+  "additional_features": [
+    "segment_positive_hours_365d",
+    "cell_positive_hours_365d"
+  ],
+  "agreed_serving_scope": {
+    "mobility_contexts": 666,
+    "native_segments": 441,
+    "original_geometry_exclusions": 3,
+    "other_pending_roads": 251,
+    "pending_cases_evidence": "preserved_unchanged",
+    "pending_shared_native_roads": [
+      "145550",
+      "51124"
+    ],
+    "pending_split_roads": [
+      "113476",
+      "33018",
+      "70704",
+      "78177",
+      "79377",
+      "91014"
+    ],
+    "physical_mobility_roads": 441,
+    "selection": "single_native_candidate excluding all shared-native relationships"
+  },
+  "approval": "Anas approval supplied directly by user: revised split, fixed history and 441-road serving scope",
+  "base_features": [
+    "elevation_mean_m",
+    "terrain_endpoint_grade_abs",
+    "terrain_relief_m",
+    "length_m",
+    "rain_1h_mm",
+    "rain_3h_mm",
+    "rain_6h_mm",
+    "rain_24h_mm"
+  ],
+  "development_interval": [
+    "2023-07-01T04:00:00Z",
+    "2023-12-25T05:00:00Z"
+  ],
+  "evaluation_policy": {
+    "2024_previously_examined": "not a pristine independent holdout; no 2024 outcomes in this fit/tuning/history",
+    "development_evaluation": "complete eligible natural-prevalence population; streamed score-bin approximation documented",
+    "family": "HistGradientBoostingClassifier",
+    "features": [
+      "elevation_mean_m",
+      "terrain_endpoint_grade_abs",
+      "terrain_relief_m",
+      "length_m",
+      "rain_1h_mm",
+      "rain_3h_mm",
+      "rain_6h_mm",
+      "rain_24h_mm",
+      "segment_positive_hours_365d",
+      "cell_positive_hours_365d"
+    ],
+    "initial_parameters_inherited_from_prior_exploration": true,
+    "initial_reference_parameters_for_review": {
+      "class_weight": null,
+      "early_stopping": false,
+      "l2_regularization": 1000.0,
+      "learning_rate": 0.1,
+      "loss": "log_loss",
+      "max_iter": 100,
+      "max_leaf_nodes": 15,
+      "min_samples_leaf": 100,
+      "random_state": 42
+    },
+    "learned_preprocessing": "fit on training only if introduced; none added for initial tree",
+    "old_threshold_transfer": false,
+    "refit_with_development_outcomes_after_selection": false,
+    "report_metrics": [
+      "approximate_AP",
+      "precision",
+      "recall",
+      "F1",
+      "TP",
+      "FP",
+      "FN",
+      "TN",
+      "alerts_per_24h"
+    ],
+    "score_calibrated": false,
+    "threshold_selection": "maximum pre-2024 development F1; ties fewest alerts then highest threshold"
+  },
+  "evaluation_population": "full_citywide_eligible_pre2024_July_to_December_2023_development",
+  "experiment_id": "climate-pre2024-v1",
+  "features": [
+    "elevation_mean_m",
+    "terrain_endpoint_grade_abs",
+    "terrain_relief_m",
+    "length_m",
+    "rain_1h_mm",
+    "rain_3h_mm",
+    "rain_6h_mm",
+    "rain_24h_mm",
+    "segment_positive_hours_365d",
+    "cell_positive_hours_365d"
+  ],
+  "fit_geography": "citywide eligible native segments, as previous baseline; 441-road agreement limits serving/export coverage, not training examples",
+  "fitting_weights": "original_inverse_inclusion_weights",
+  "history_policy": {
+    "availability_delay_days": 7,
+    "count_unit": "positive_segment_hours",
+    "cutoff": "min(prediction_time_utc - 7 days, training_end)",
+    "interval": "[cutoff - 365 days, cutoff)",
+    "lookback_days": 365,
+    "publication_availability": "assumed_not_verified",
+    "source": "pre2024_training_eligible_positive_segment_hours",
+    "validation_labels_used_as_history": false
+  },
+  "label_availability": {
+    "final_freeze_utc": "2024-01-01T05:00:00Z",
+    "historical_publication_and_revision_times_verified": false,
+    "label_delay_days_assumed": 7,
+    "label_eligibility_rule": "t + 1 hour + 7 days <= partition labels_available_by",
+    "source": "existing verified retrospective snapshot, no recreated historical source vintage"
+  },
+  "no_2024_outcomes_in_fitting_tuning_or_history": true,
+  "partition_label_cutoffs": {
+    "development": "2024-01-01T05:00:00Z",
+    "training": "2023-07-01T04:00:00Z"
+  },
+  "proposal_sha256": "7f43361dedabcd5332ae3027f5f230c6b0bb72f7ee2c84e2a4a5fa8a718d408f",
+  "proposed_tree_parameters": {
+    "class_weight": null,
+    "early_stopping": false,
+    "l2_regularization": 1000.0,
+    "learning_rate": 0.1,
+    "loss": "log_loss",
+    "max_iter": 100,
+    "max_leaf_nodes": 15,
+    "min_samples_leaf": 100,
+    "random_state": 42
+  },
+  "sampling_policy": {
+    "actual_sample_counts": "to_be_measured_after_approval",
+    "additional_balanced_class_weights": false,
+    "hash_expression": "md5_number_lower(street_segment_id || '|' || epoch(prediction_time_utc)::VARCHAR || 'plexa-baseline-v1')",
+    "negative_keep_fraction": 0.0002,
+    "negative_keep_rule": "hash_expression % 5000 = 0",
+    "negative_weight": 5000.0,
+    "positive_weight": 1.0,
+    "rainfall_stratified_sampling_experiment": "paused_not_used",
+    "retain_all_eligible_positives": true,
+    "seed": "plexa-baseline-v1",
+    "weight_normalization": false
+  },
+  "status": "approved_frozen_before_fitting",
+  "target": "reported_street_or_highway_flooding_next_hour",
+  "training_interval": [
+    "2020-10-14T04:00:00Z",
+    "2023-06-24T04:00:00Z"
+  ]
+}

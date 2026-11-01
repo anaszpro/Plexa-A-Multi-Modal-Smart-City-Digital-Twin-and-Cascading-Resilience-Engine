@@ -160,8 +160,9 @@ class ClimateHistoryPredictor:
                 raise RuntimeError("Inference returned invalid probabilities")
             train_start, train_end = map(pd.Timestamp, self.experiment["training_interval"])
             for i, (position, timestamp, _, identity) in enumerate(prepared):
-                warnings = ["UNCALIBRATED_REPORT_PROXY", "WEAK_REUSED_DEVELOPMENT_PERFORMANCE",
-                            "HISTORICAL_AVAILABILITY_ASSUMED"]
+                warnings = list(self.manifest.get("prediction_warnings", [
+                    "UNCALIBRATED_REPORT_PROXY", "WEAK_REUSED_DEVELOPMENT_PERFORMANCE",
+                    "HISTORICAL_AVAILABILITY_ASSUMED"]))
                 if train_start <= timestamp < train_end:
                     warnings.append("TRAINING_PERIOD_REPLAY")
                 score = float(scores[i])
