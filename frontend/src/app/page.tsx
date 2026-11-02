@@ -1,3 +1,4 @@
+import ResponsePlanner from "@/components/response/ResponsePlanner";
 export default function Home() {
   return (
     <div className="dashboard">
@@ -21,8 +22,7 @@ export default function Home() {
           className="dashboard-panel response-panel"
           aria-labelledby="response-heading"
         >
-          <h1 id="response-heading">Response planner</h1>
-          <p>Choose a starting point and destination to plan a response.</p>
+          <ResponsePlanner />
 
           <section aria-labelledby="incidents-heading">
             <h2 id="incidents-heading">Incident reports</h2>

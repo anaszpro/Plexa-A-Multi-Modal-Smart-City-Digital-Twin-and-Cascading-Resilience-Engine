@@ -220,3 +220,66 @@ h2 {
     padding: 24px;
   }
 }
+  /* Response planner */
+
+.response-panel > section:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.planner-fields {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.planner-field {
+  display: grid;
+  gap: 6px;
+}
+
+.planner-field label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.planner-field input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #8795a8;
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--foreground);
+  font: inherit;
+}
+
+.planner-field input::placeholder {
+  color: var(--muted);
+}
+
+.response-panel .field-help {
+  margin-top: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.planner-submit {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--accent);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 600;
+}
+
+.planner-submit:disabled {
+  border-color: var(--border);
+  background: #e8edf3;
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
