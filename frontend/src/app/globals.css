@@ -283,3 +283,18 @@ h2 {
   cursor: not-allowed;
 }
 
+/* Interactive city map */
+
+.city-map {
+  flex: 1;
+  width: 100%;
+  min-height: 400px;
+  z-index: 0;
+  font-family: inherit;
+}
+
+@media (max-width: 767px) {
+  .city-map {
+    min-height: 360px;
+  }
+}

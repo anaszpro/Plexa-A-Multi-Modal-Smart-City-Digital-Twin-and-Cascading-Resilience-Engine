@@ -1,4 +1,5 @@
 import ResponsePlanner from "@/components/response/ResponsePlanner";
+import CityMapLoader from "@/components/map/CityMapLoader";
 export default function Home() {
   return (
     <div className="dashboard">
@@ -38,12 +39,8 @@ export default function Home() {
             <span>New York City</span>
           </div>
 
-          <div className="map-placeholder">
-            <p>Map workspace</p>
-            <span>
-              Roads, reports and response routes will appear here.
-            </span>
-          </div>
+          <CityMapLoader />
+          
         </section>
 
         <aside
