@@ -1,0 +1,995 @@
+{
+  "schema_id": "plexa.incidents.fixture.v0.1.0",
+  "contract_status": "draft_for_frontend_review",
+  "is_fixture": true,
+  "scenario_id": "ida",
+  "as_of_utc": "2021-09-02T02:00:00Z",
+  "display_timezone": "America/New_York",
+  "availability_policy": {
+    "policy_id": "ida-created-ny-release-at-creation-v0.1.0",
+    "timezone_assumed": "America/New_York",
+    "release_at_creation_assumed": true,
+    "historical_publication_times_verified": false
+  },
+  "selection": {
+    "mode": "representative_subset",
+    "total_reports_at_clock": 7941,
+    "returned_reports": 20,
+    "is_complete_feed": false,
+    "is_paginated_response": false
+  },
+  "lifecycle_basis": "initial_active_view_without_operator_clear_actions",
+  "capabilities": {
+    "live_api": false,
+    "report_clearing": false,
+    "routing": false,
+    "road_association": false
+  },
+  "provenance": {
+    "classifier_package_id": "safety-311-rules-v1.0.1",
+    "native_scenario_id": "ida-2021-static-v1",
+    "native_run_id": "ida-311-valid-908ad74f6d9e0f092e7cfe49",
+    "source_request_sha256": "cfed55466c51b99b60de5f95dd4763c0d9d0b6eee29390347984300a19d9fc0c",
+    "source_result_sha256": "903374f855c79656142b58e2403dd5d555ad2aa42ca3ae9fd1dad8e8ad0ac51a",
+    "timed_view_id": "plexa-ida-safety-timed-view-v0.1.0"
+  },
+  "incidents": [
+    {
+      "incident_id": "nyc_311:51710678",
+      "complaint_type": "Street Light Condition",
+      "descriptor": "Street Light Out",
+      "location": {
+        "latitude": 40.744791406467726,
+        "longitude": -73.91742167156947,
+        "location_text": "41-50 47 STREET",
+        "borough": "QUEENS",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 00:00:00",
+        "created_utc_assumed": "2021-09-01T04:00:00Z",
+        "availability_utc_assumed": "2021-09-01T04:00:00Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51710678",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00043896"
+      },
+      "classification": {
+        "status": "skipped",
+        "reason_code": "NOT_SELECTED_BY_RULE",
+        "rule_id": null,
+        "hazard_type": null,
+        "severity": null,
+        "severity_basis": null,
+        "score": null,
+        "warnings": [
+          "TIME_UNRESOLVED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51700093",
+      "complaint_type": "Noise - Vehicle",
+      "descriptor": "Car/Truck Music",
+      "location": {
+        "latitude": 40.86535764249122,
+        "longitude": -73.892495473103,
+        "location_text": "2645 BRIGGS AVENUE",
+        "borough": "BRONX",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 00:00:05",
+        "created_utc_assumed": "2021-09-01T04:00:05Z",
+        "availability_utc_assumed": "2021-09-01T04:00:05Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51700093",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00034357"
+      },
+      "classification": {
+        "status": "skipped",
+        "reason_code": "NOT_SELECTED_BY_RULE",
+        "rule_id": null,
+        "hazard_type": null,
+        "severity": null,
+        "severity_basis": null,
+        "score": null,
+        "warnings": [
+          "TIME_UNRESOLVED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51698315",
+      "complaint_type": "Noise - Vehicle",
+      "descriptor": "Car/Truck Music",
+      "location": {
+        "latitude": 40.83018108184639,
+        "longitude": -73.87571695998837,
+        "location_text": "1234 STRATFORD AVENUE",
+        "borough": "BRONX",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 00:00:50",
+        "created_utc_assumed": "2021-09-01T04:00:50Z",
+        "availability_utc_assumed": "2021-09-01T04:00:50Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51698315",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00032797"
+      },
+      "classification": {
+        "status": "skipped",
+        "reason_code": "NOT_SELECTED_BY_RULE",
+        "rule_id": null,
+        "hazard_type": null,
+        "severity": null,
+        "severity_basis": null,
+        "score": null,
+        "warnings": [
+          "TIME_UNRESOLVED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51698397",
+      "complaint_type": "Noise - Residential",
+      "descriptor": "Banging/Pounding",
+      "location": {
+        "latitude": 40.88414951808322,
+        "longitude": -73.87766297790301,
+        "location_text": "3595 BAINBRIDGE AVENUE",
+        "borough": "BRONX",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 00:00:50",
+        "created_utc_assumed": "2021-09-01T04:00:50Z",
+        "availability_utc_assumed": "2021-09-01T04:00:50Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51698397",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00032862"
+      },
+      "classification": {
+        "status": "skipped",
+        "reason_code": "NOT_SELECTED_BY_RULE",
+        "rule_id": null,
+        "hazard_type": null,
+        "severity": null,
+        "severity_basis": null,
+        "score": null,
+        "warnings": [
+          "TIME_UNRESOLVED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51694985",
+      "complaint_type": "Illegal Parking",
+      "descriptor": "Posted Parking Sign Violation",
+      "location": {
+        "latitude": 40.69475961731821,
+        "longitude": -73.9761271639004,
+        "location_text": "81 NORTH PORTLAND AVENUE",
+        "borough": "BROOKLYN",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 00:01:00",
+        "created_utc_assumed": "2021-09-01T04:01:00Z",
+        "availability_utc_assumed": "2021-09-01T04:01:00Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51694985",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00029823"
+      },
+      "classification": {
+        "status": "skipped",
+        "reason_code": "NOT_SELECTED_BY_RULE",
+        "rule_id": null,
+        "hazard_type": null,
+        "severity": null,
+        "severity_basis": null,
+        "score": null,
+        "warnings": [
+          "TIME_UNRESOLVED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51702076",
+      "complaint_type": "Request Large Bulky Item Collection",
+      "descriptor": "Request Large Bulky Item Collection",
+      "location": {
+        "latitude": 40.66160546511425,
+        "longitude": -73.95029204482805,
+        "location_text": "363 LINCOLN ROAD",
+        "borough": "BROOKLYN",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 00:01:00",
+        "created_utc_assumed": "2021-09-01T04:01:00Z",
+        "availability_utc_assumed": "2021-09-01T04:01:00Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51702076",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00036168"
+      },
+      "classification": {
+        "status": "skipped",
+        "reason_code": "NOT_SELECTED_BY_RULE",
+        "rule_id": null,
+        "hazard_type": null,
+        "severity": null,
+        "severity_basis": null,
+        "score": null,
+        "warnings": [
+          "TIME_UNRESOLVED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51698367",
+      "complaint_type": "Derelict Vehicles",
+      "descriptor": "Derelict Vehicles",
+      "location": {
+        "latitude": null,
+        "longitude": null,
+        "location_text": null,
+        "borough": "QUEENS",
+        "coordinate_status": "missing"
+      },
+      "time": {
+        "created_raw": "2021-09-01 00:06:00",
+        "created_utc_assumed": "2021-09-01T04:06:00Z",
+        "availability_utc_assumed": "2021-09-01T04:06:00Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51698367",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00032844"
+      },
+      "classification": {
+        "status": "skipped",
+        "reason_code": "NOT_SELECTED_BY_RULE",
+        "rule_id": null,
+        "hazard_type": null,
+        "severity": null,
+        "severity_basis": null,
+        "score": null,
+        "warnings": [
+          "TIME_UNRESOLVED",
+          "COORDINATES_MISSING"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51724707",
+      "complaint_type": "Sewer",
+      "descriptor": "Catch Basin Clogged/Flooding (Use Comments) (SC)",
+      "location": {
+        "latitude": 40.64706505485257,
+        "longitude": -73.97040370878996,
+        "location_text": "65 EAST   10 STREET",
+        "borough": "BROOKLYN",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 00:43:00",
+        "created_utc_assumed": "2021-09-01T04:43:00Z",
+        "availability_utc_assumed": "2021-09-01T04:43:00Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51724707",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00056864"
+      },
+      "classification": {
+        "status": "ok",
+        "reason_code": null,
+        "rule_id": "S311-03",
+        "hazard_type": "flood",
+        "severity": "medium",
+        "severity_basis": "fixed_rule_default",
+        "score": {
+          "kind": "rule_estimate",
+          "value": 0.9,
+          "calibrated": false
+        },
+        "warnings": [
+          "TIME_UNRESOLVED",
+          "GUIDANCE_NOT_INCLUDED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51699711",
+      "complaint_type": "Street Condition",
+      "descriptor": "Cave-in",
+      "location": {
+        "latitude": 40.670229840236225,
+        "longitude": -73.94488556260889,
+        "location_text": "273 BROOKLYN AVENUE",
+        "borough": "BROOKLYN",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 00:49:07",
+        "created_utc_assumed": "2021-09-01T04:49:07Z",
+        "availability_utc_assumed": "2021-09-01T04:49:07Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51699711",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00034048"
+      },
+      "classification": {
+        "status": "ok",
+        "reason_code": null,
+        "rule_id": "S311-09",
+        "hazard_type": "road_blockage",
+        "severity": "medium",
+        "severity_basis": "fixed_rule_default",
+        "score": {
+          "kind": "rule_estimate",
+          "value": 0.9,
+          "calibrated": false
+        },
+        "warnings": [
+          "TIME_UNRESOLVED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51719089",
+      "complaint_type": "Traffic Signal Condition",
+      "descriptor": "Veh Signal Lamp",
+      "location": {
+        "latitude": null,
+        "longitude": null,
+        "location_text": null,
+        "borough": "BRONX",
+        "coordinate_status": "missing"
+      },
+      "time": {
+        "created_raw": "2021-09-01 01:11:00",
+        "created_utc_assumed": "2021-09-01T05:11:00Z",
+        "availability_utc_assumed": "2021-09-01T05:11:00Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51719089",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00051679"
+      },
+      "classification": {
+        "status": "skipped",
+        "reason_code": "NOT_SELECTED_BY_RULE",
+        "rule_id": null,
+        "hazard_type": null,
+        "severity": null,
+        "severity_basis": null,
+        "score": null,
+        "warnings": [
+          "TIME_UNRESOLVED",
+          "COORDINATES_MISSING"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51707060",
+      "complaint_type": "Damaged Tree",
+      "descriptor": "Tree Leaning/Uprooted",
+      "location": {
+        "latitude": 40.72717045772344,
+        "longitude": -73.97969822033606,
+        "location_text": "166 AVENUE B",
+        "borough": "MANHATTAN",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 03:27:25",
+        "created_utc_assumed": "2021-09-01T07:27:25Z",
+        "availability_utc_assumed": "2021-09-01T07:27:25Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51707060",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00040665"
+      },
+      "classification": {
+        "status": "ok",
+        "reason_code": null,
+        "rule_id": "S311-08",
+        "hazard_type": "road_blockage",
+        "severity": "medium",
+        "severity_basis": "fixed_rule_default",
+        "score": {
+          "kind": "rule_estimate",
+          "value": 0.9,
+          "calibrated": false
+        },
+        "warnings": [
+          "TIME_UNRESOLVED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51717699",
+      "complaint_type": "Sewer",
+      "descriptor": "Manhole Overflow (Use Comments) (SA1)",
+      "location": {
+        "latitude": 40.605731348940594,
+        "longitude": -73.98500753953525,
+        "location_text": null,
+        "borough": "BROOKLYN",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 07:29:00",
+        "created_utc_assumed": "2021-09-01T11:29:00Z",
+        "availability_utc_assumed": "2021-09-01T11:29:00Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51717699",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00050393"
+      },
+      "classification": {
+        "status": "ok",
+        "reason_code": null,
+        "rule_id": "S311-04",
+        "hazard_type": "flood",
+        "severity": "medium",
+        "severity_basis": "fixed_rule_default",
+        "score": {
+          "kind": "rule_estimate",
+          "value": 0.9,
+          "calibrated": false
+        },
+        "warnings": [
+          "TIME_UNRESOLVED",
+          "GUIDANCE_NOT_INCLUDED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51713232",
+      "complaint_type": "Sewer",
+      "descriptor": "Sewer Backup (Use Comments) (SA)",
+      "location": {
+        "latitude": 40.606447759314946,
+        "longitude": -73.98515143458948,
+        "location_text": "1646 WEST   12 STREET",
+        "borough": "BROOKLYN",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 07:38:00",
+        "created_utc_assumed": "2021-09-01T11:38:00Z",
+        "availability_utc_assumed": "2021-09-01T11:38:00Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51713232",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00046257"
+      },
+      "classification": {
+        "status": "ok",
+        "reason_code": null,
+        "rule_id": "S311-01",
+        "hazard_type": "flood",
+        "severity": "medium",
+        "severity_basis": "fixed_rule_default",
+        "score": {
+          "kind": "rule_estimate",
+          "value": 0.7,
+          "calibrated": false
+        },
+        "warnings": [
+          "TIME_UNRESOLVED",
+          "GUIDANCE_NOT_INCLUDED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51704710",
+      "complaint_type": "Damaged Tree",
+      "descriptor": "Branch or Limb Has Fallen Down",
+      "location": {
+        "latitude": 40.72053493013871,
+        "longitude": -73.82549844449133,
+        "location_text": "135-47 77 AVENUE",
+        "borough": "QUEENS",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 09:41:45",
+        "created_utc_assumed": "2021-09-01T13:41:45Z",
+        "availability_utc_assumed": "2021-09-01T13:41:45Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51704710",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00038552"
+      },
+      "classification": {
+        "status": "ok",
+        "reason_code": null,
+        "rule_id": "S311-07",
+        "hazard_type": "road_blockage",
+        "severity": "medium",
+        "severity_basis": "fixed_rule_default",
+        "score": {
+          "kind": "rule_estimate",
+          "value": 0.9,
+          "calibrated": false
+        },
+        "warnings": [
+          "TIME_UNRESOLVED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51711707",
+      "complaint_type": "Damaged Tree",
+      "descriptor": "Entire Tree Has Fallen Down",
+      "location": {
+        "latitude": 40.88390681183584,
+        "longitude": -73.90907212753449,
+        "location_text": "3194 CAMBRIDGE AVENUE",
+        "borough": "BRONX",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 09:48:21",
+        "created_utc_assumed": "2021-09-01T13:48:21Z",
+        "availability_utc_assumed": "2021-09-01T13:48:21Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51711707",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00044837"
+      },
+      "classification": {
+        "status": "ok",
+        "reason_code": null,
+        "rule_id": "S311-06",
+        "hazard_type": "road_blockage",
+        "severity": "medium",
+        "severity_basis": "fixed_rule_default",
+        "score": {
+          "kind": "rule_estimate",
+          "value": 0.9,
+          "calibrated": false
+        },
+        "warnings": [
+          "TIME_UNRESOLVED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51728420",
+      "complaint_type": "Water System",
+      "descriptor": "Excessive Water In Basement (WEFB)",
+      "location": {
+        "latitude": 40.62094795818339,
+        "longitude": -73.91841059527874,
+        "location_text": "1335 EAST   59 STREET",
+        "borough": "BROOKLYN",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 10:17:00",
+        "created_utc_assumed": "2021-09-01T14:17:00Z",
+        "availability_utc_assumed": "2021-09-01T14:17:00Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51728420",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00060308"
+      },
+      "classification": {
+        "status": "ok",
+        "reason_code": null,
+        "rule_id": "S311-05",
+        "hazard_type": "flood",
+        "severity": "medium",
+        "severity_basis": "fixed_rule_default",
+        "score": {
+          "kind": "rule_estimate",
+          "value": 0.9,
+          "calibrated": false
+        },
+        "warnings": [
+          "TIME_UNRESOLVED",
+          "GUIDANCE_NOT_INCLUDED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51718701",
+      "complaint_type": "Sewer",
+      "descriptor": "Street Flooding (SJ)",
+      "location": {
+        "latitude": 40.57894496994225,
+        "longitude": -74.09827410955283,
+        "location_text": "140 HAVEN AVENUE",
+        "borough": "STATEN ISLAND",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 10:45:00",
+        "created_utc_assumed": "2021-09-01T14:45:00Z",
+        "availability_utc_assumed": "2021-09-01T14:45:00Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51718701",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00051303"
+      },
+      "classification": {
+        "status": "ok",
+        "reason_code": null,
+        "rule_id": "S311-02",
+        "hazard_type": "flood",
+        "severity": "medium",
+        "severity_basis": "fixed_rule_default",
+        "score": {
+          "kind": "rule_estimate",
+          "value": 0.9,
+          "calibrated": false
+        },
+        "warnings": [
+          "TIME_UNRESOLVED",
+          "GUIDANCE_NOT_INCLUDED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51704862",
+      "complaint_type": "Street Condition",
+      "descriptor": "Cave-in",
+      "location": {
+        "latitude": null,
+        "longitude": null,
+        "location_text": "11 AVENUE",
+        "borough": "BROOKLYN",
+        "coordinate_status": "missing"
+      },
+      "time": {
+        "created_raw": "2021-09-01 14:49:54",
+        "created_utc_assumed": "2021-09-01T18:49:54Z",
+        "availability_utc_assumed": "2021-09-01T18:49:54Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51704862",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00038676"
+      },
+      "classification": {
+        "status": "ok",
+        "reason_code": null,
+        "rule_id": "S311-09",
+        "hazard_type": "road_blockage",
+        "severity": "medium",
+        "severity_basis": "fixed_rule_default",
+        "score": {
+          "kind": "rule_estimate",
+          "value": 0.9,
+          "calibrated": false
+        },
+        "warnings": [
+          "TIME_UNRESOLVED",
+          "COORDINATES_MISSING"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51705968",
+      "complaint_type": "Street Condition",
+      "descriptor": "Cave-in",
+      "location": {
+        "latitude": null,
+        "longitude": null,
+        "location_text": "EDSON AVENUE",
+        "borough": "BRONX",
+        "coordinate_status": "missing"
+      },
+      "time": {
+        "created_raw": "2021-09-01 16:00:56",
+        "created_utc_assumed": "2021-09-01T20:00:56Z",
+        "availability_utc_assumed": "2021-09-01T20:00:56Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51705968",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00039661"
+      },
+      "classification": {
+        "status": "ok",
+        "reason_code": null,
+        "rule_id": "S311-09",
+        "hazard_type": "road_blockage",
+        "severity": "medium",
+        "severity_basis": "fixed_rule_default",
+        "score": {
+          "kind": "rule_estimate",
+          "value": 0.9,
+          "calibrated": false
+        },
+        "warnings": [
+          "TIME_UNRESOLVED",
+          "COORDINATES_MISSING"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    },
+    {
+      "incident_id": "nyc_311:51728872",
+      "complaint_type": "Sewer",
+      "descriptor": "Manhole Cover Missing (Emergency) (SA3)",
+      "location": {
+        "latitude": 40.55030192804723,
+        "longitude": -74.16968494401479,
+        "location_text": null,
+        "borough": "STATEN ISLAND",
+        "coordinate_status": "provided"
+      },
+      "time": {
+        "created_raw": "2021-09-01 20:23:00",
+        "created_utc_assumed": "2021-09-02T00:23:00Z",
+        "availability_utc_assumed": "2021-09-02T00:23:00Z",
+        "resolution": "assumed",
+        "native_utc": null,
+        "native_resolution": "unresolved"
+      },
+      "source": {
+        "dataset_id": "nyc_311",
+        "record_id": "51728872",
+        "snapshot_id": "nyc311-csv-sha256-bce2842a257b9522c8f08eb114d5595a0f003abe298e4555e8611f08e0897d72",
+        "kind": "historical",
+        "native_request_id": "nyc311-row-00060717"
+      },
+      "classification": {
+        "status": "ok",
+        "reason_code": null,
+        "rule_id": "S311-10",
+        "hazard_type": "road_blockage",
+        "severity": "medium",
+        "severity_basis": "fixed_rule_default",
+        "score": {
+          "kind": "rule_estimate",
+          "value": 0.9,
+          "calibrated": false
+        },
+        "warnings": [
+          "TIME_UNRESOLVED"
+        ]
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "not_assessed"
+    }
+  ]
+}
