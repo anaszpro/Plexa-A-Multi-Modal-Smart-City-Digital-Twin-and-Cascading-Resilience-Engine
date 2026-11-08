@@ -62,10 +62,14 @@ export default function IncidentWorkspace({
       <section className="map-panel" aria-labelledby="map-heading">
         <div className="map-heading">
           <h2 id="map-heading">City map</h2>
-          <span>New York City · Base map only</span>
+          <span>New York City · Representative report sample</span>
         </div>
 
-        <CityMapLoader />
+        <CityMapLoader
+        incidents={fixture.incidents}
+        selectedIncidentId={selectedIncidentId}
+        onSelect={setSelectedIncidentId}
+        />
       </section>
 
       <aside
