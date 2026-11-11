@@ -1,8 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import type { CityMapProps } from "./types";
 
-const CityMap = dynamic(() => import("./CityMap"), {
+const CityMap = dynamic<CityMapProps>(() => import("./CityMap"), {
   ssr: false,
   loading: () => (
     <div className="map-placeholder" role="status">
@@ -11,6 +12,6 @@ const CityMap = dynamic(() => import("./CityMap"), {
   ),
 });
 
-export default function CityMapLoader() {
-  return <CityMap />;
+export default function CityMapLoader(props: CityMapProps) {
+  return <CityMap {...props} />;
 }
