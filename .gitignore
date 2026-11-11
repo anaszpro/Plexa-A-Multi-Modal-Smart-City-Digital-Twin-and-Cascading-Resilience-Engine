@@ -29,3 +29,8 @@ frontend/dist/
 
 # MLflow file-based tracking directories
 mlruns/
+
+# Local integration workbooks and generated artifacts can contain source records.
+/notebooks/Integration/Ida_cascade_baseline_v1.ipynb
+/notebooks/Integration/Plexa_Cascading_Baseline_v1.ipynb.ipynb
+/outputs/integration/
