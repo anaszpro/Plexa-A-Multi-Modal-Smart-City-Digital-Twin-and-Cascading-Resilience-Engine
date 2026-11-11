@@ -2,6 +2,31 @@ data/raw/
 data/processed/
 anaconda_projects/
 __pycache__/
-.env
 .ipynb_checkpoints/
 .DS_Store
+
+.env
+.env.*
+!.env.example
+
+# Mobility datasets and database backups stay local.
+/data/mobility/*
+!/data/mobility/clean/
+!/data/mobility/Plexa Mobility Module Data Map v3.pdf
+/data/mobility/clean/*
+!/data/mobility/clean/*_snapshot.json
+!/data/mobility/clean/*_report.md
+*.dump
+
+# Large row-level outputs and local tracking assets.
+/outputs/mobility/**/*.parquet
+/outputs/mobility/mlartifacts/
+/outputs/mobility/mlflow.db*
+/outputs/mobility/mlflow_relocation.json
+/tmp/
+mlruns/
+
+# Local integration workbooks and generated artifacts.
+/notebooks/Integration/Ida_cascade_baseline_v1.ipynb
+/notebooks/Integration/Plexa_Cascading_Baseline_v1.ipynb.ipynb
+/outputs/integration/
