@@ -16,6 +16,7 @@ export default function IncidentDetails({
   }
 
   const classification = incident.classification;
+  const isSynthetic = incident.source.kind === "synthetic";
 
   const classificationLabel =
     classification.status === "skipped"
@@ -24,10 +25,21 @@ export default function IncidentDetails({
         ? "Flood-rule match"
         : "Road-blockage-rule match";
 
+  const roadAssociationLabel =
+    incident.road_association_status === "matched"
+      ? "Matched"
+      : "Not assessed";
+
   return (
     <div className="incident-details">
       <h3>{incident.complaint_type}</h3>
       <p>{incident.descriptor || "No descriptor supplied"}</p>
+
+      {isSynthetic && (
+        <p className="incident-interpretation">
+          Synthetic example for integration testing.
+        </p>
+      )}
 
       <dl>
         <dt>Report ID</dt>
@@ -39,7 +51,7 @@ export default function IncidentDetails({
         </dd>
 
         <dt>Borough</dt>
-        <dd>{incident.location.borough}</dd>
+        <dd>{incident.location.borough || "Not provided"}</dd>
 
         <dt>Safety classification</dt>
         <dd>{classificationLabel}</dd>
@@ -49,11 +61,14 @@ export default function IncidentDetails({
 
         <dt>Lifecycle</dt>
         <dd>Active in the supplied snapshot</dd>
+
+        <dt>Road association</dt>
+        <dd>{roadAssociationLabel}</dd>
       </dl>
 
       {incident.location.coordinate_status === "missing" && (
         <p className="incident-location-warning">
-          Map location unavailable for this report.
+          Location unavailable on the map.
         </p>
       )}
 
@@ -88,9 +103,13 @@ export default function IncidentDetails({
 
           <dt>Time interpretation</dt>
           <dd>
-            UTC conversion and release at creation are assumed.
-            Historical publication times have not been verified.
+            {isSynthetic
+              ? "Times are supplied by the synthetic example and do not establish historical publication times."
+              : "UTC conversion and release at creation are assumed. Historical publication times have not been verified."}
           </dd>
+
+          <dt>Source type</dt>
+          <dd>{isSynthetic ? "Synthetic" : "Historical"}</dd>
 
           <dt>Source dataset</dt>
           <dd>{incident.source.dataset_id}</dd>
@@ -111,28 +130,18 @@ export default function IncidentDetails({
             </>
           )}
 
-          {classification.score && (
-            <>
-              <dt>Uncalibrated rule score</dt>
-              <dd>
-                {classification.score.value} — a rule estimate,
-                not a probability.
-              </dd>
-            </>
-          )}
+          <dt>Uncalibrated rule score</dt>
+          <dd>
+            {classification.score
+              ? `${classification.score.value} — a rule estimate, not a probability.`
+              : "Not provided"}
+          </dd>
 
-          {classification.severity && (
-            <>
-              <dt>Rule-assigned severity</dt>
-              <dd>{classification.severity}</dd>
+          <dt>Rule-assigned severity</dt>
+          <dd>{classification.severity ?? "Not provided"}</dd>
 
-              <dt>Severity basis</dt>
-              <dd>{classification.severity_basis}</dd>
-            </>
-          )}
-
-          <dt>Road association</dt>
-          <dd>Not assessed</dd>
+          <dt>Severity basis</dt>
+          <dd>{classification.severity_basis ?? "Not provided"}</dd>
         </dl>
 
         {classification.warnings.length > 0 && (

@@ -1,0 +1,82 @@
+{
+  "schema_id": "plexa.incidents.fixture.v0.1.0",
+  "contract_status": "draft",
+  "is_fixture": true,
+  "fixture_kind": "synthetic",
+  "scenario_id": "ida",
+  "as_of_utc": "2021-09-02T02:00:00Z",
+  "display_timezone": "America/New_York",
+  "availability_policy": {
+    "policy_id": "synthetic-v0.1.0",
+    "timezone_assumed": "America/New_York",
+    "release_at_creation_assumed": true,
+    "historical_publication_times_verified": false
+  },
+  "selection": {
+    "mode": "synthetic_example",
+    "total_reports_at_clock": 1,
+    "returned_reports": 1,
+    "is_complete_feed": false,
+    "is_paginated_response": false
+  },
+  "lifecycle_basis": "Synthetic starting state",
+  "capabilities": {
+    "live_api": false,
+    "report_clearing": false,
+    "routing": false,
+    "road_association": false
+  },
+  "provenance": {
+    "classifier_package_id": null,
+    "native_scenario_id": null,
+    "native_run_id": null,
+    "source_request_sha256": null,
+    "source_result_sha256": null,
+    "timed_view_id": null
+  },
+  "incidents": [
+    {
+      "incident_id": "demo:road-warning-001",
+      "complaint_type": "Street Condition",
+      "descriptor": "Cave-in",
+      "location": {
+        "latitude": 40.727231070051246,
+        "longitude": -73.95793850434659,
+        "location_text": "Demo Street",
+        "borough": null,
+        "coordinate_status": "range_valid_pair"
+      },
+      "time": {
+        "created_raw": "2021-09-01T21:59:00",
+        "created_utc_assumed": "2021-09-02T01:59:00Z",
+        "availability_utc_assumed": "2021-09-02T01:59:00Z",
+        "resolution": "unique_assumed",
+        "native_utc": null,
+        "native_resolution": null
+      },
+      "source": {
+        "dataset_id": "plexa-synthetic-demo",
+        "record_id": "road-warning-001",
+        "snapshot_id": "synthetic-v0.1.0",
+        "kind": "synthetic",
+        "native_request_id": null
+      },
+      "classification": {
+        "status": "ok",
+        "reason_code": null,
+        "rule_id": "S311-09",
+        "hazard_type": "road_blockage",
+        "severity": null,
+        "severity_basis": null,
+        "score": null,
+        "warnings": []
+      },
+      "verification_status": "unverified",
+      "lifecycle": {
+        "state": "active",
+        "cleared_at_utc": null
+      },
+      "road_association_status": "matched"
+    }
+  ]
+}

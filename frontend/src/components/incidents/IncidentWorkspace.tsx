@@ -20,6 +20,11 @@ export default function IncidentWorkspace({
   const [classificationFilter, setClassificationFilter] =
     useState("all");
 
+  const isSynthetic =
+    "fixture_kind" in fixture && fixture.fixture_kind === "synthetic";
+
+  const reportCount = fixture.incidents.length;
+  const reportNoun = reportCount === 1 ? "report" : "reports";
   const query = search.trim().toLowerCase();
 
   const filteredIncidents = fixture.incidents.filter((incident) => {
@@ -69,12 +74,20 @@ export default function IncidentWorkspace({
           <h1 id="incidents-heading">Incident reports</h1>
 
           <p>
-            Representative sample of {fixture.incidents.length} reports
-            from{" "}
-            {fixture.selection.total_reports_at_clock.toLocaleString(
-              "en-US"
-            )}{" "}
-            available at this scenario time.
+            {isSynthetic ? (
+              <>
+                Synthetic example with {reportCount} {reportNoun}.
+                {" "}For integration testing.
+              </>
+            ) : (
+              <>
+                Representative sample of {reportCount} {reportNoun} from{" "}
+                {fixture.selection.total_reports_at_clock.toLocaleString(
+                  "en-US"
+                )}{" "}
+                available at this scenario time.
+              </>
+            )}
           </p>
 
           <div className="incident-filters">
@@ -119,10 +132,13 @@ export default function IncidentWorkspace({
           </div>
 
           <p role="status" aria-live="polite" aria-atomic="true">
-            Showing {filteredIncidents.length} of{" "}
-            {fixture.incidents.length} sample reports · {locatedReports}{" "}
-            located · {filteredIncidents.length - locatedReports} without
-            map locations.
+            Showing {filteredIncidents.length} of {reportCount}{" "}
+            {isSynthetic ? "synthetic" : "sample"} {reportNoun}
+            {" · "}
+            {locatedReports} located
+            {" · "}
+            {filteredIncidents.length - locatedReports} without map
+            locations.
           </p>
 
           <div id="incident-results" className="incident-results">
@@ -147,7 +163,12 @@ export default function IncidentWorkspace({
       <section className="map-panel" aria-labelledby="map-heading">
         <div className="map-heading">
           <h2 id="map-heading">City map</h2>
-          <span>New York City · Representative report sample</span>
+          <span>
+            New York City ·{" "}
+            {isSynthetic
+              ? "Synthetic integration example"
+              : "Representative report sample"}
+          </span>
         </div>
 
         <CityMapLoader
