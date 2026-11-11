@@ -16,13 +16,43 @@ export default function IncidentWorkspace({
 }: IncidentWorkspaceProps) {
   const [selectedIncidentId, setSelectedIncidentId] =
     useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [classificationFilter, setClassificationFilter] =
+    useState("all");
+
+  const query = search.trim().toLowerCase();
+
+  const filteredIncidents = fixture.incidents.filter((incident) => {
+    const searchableText = [
+      incident.incident_id,
+      incident.source.record_id,
+      incident.complaint_type,
+      incident.descriptor,
+      incident.location.location_text,
+      incident.location.borough,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    const matchesSearch = searchableText.includes(query);
+
+    const matchesClassification =
+      classificationFilter === "all" ||
+      (classificationFilter === "skipped"
+        ? incident.classification.status === "skipped"
+        : incident.classification.status === "ok" &&
+          incident.classification.hazard_type === classificationFilter);
+
+    return matchesSearch && matchesClassification;
+  });
 
   const selectedIncident =
-    fixture.incidents.find(
+    filteredIncidents.find(
       (incident) => incident.incident_id === selectedIncidentId
     ) ?? null;
 
-  const locatedReports = fixture.incidents.filter(
+  const locatedReports = filteredIncidents.filter(
     (incident) => incident.location.coordinate_status === "provided"
   ).length;
 
@@ -39,25 +69,70 @@ export default function IncidentWorkspace({
           <h1 id="incidents-heading">Incident reports</h1>
 
           <p>
-            Sample: {fixture.incidents.length} reports · {locatedReports}{" "}
-            located · {fixture.incidents.length - locatedReports} without
-            map locations.
-          </p>
-
-          <p>
+            Representative sample of {fixture.incidents.length} reports
+            from{" "}
             {fixture.selection.total_reports_at_clock.toLocaleString(
               "en-US"
             )}{" "}
-            available at this scenario time. This is a representative
-            sample.
+            available at this scenario time.
           </p>
 
-          <IncidentList
-            incidents={fixture.incidents}
-            selectedIncidentId={selectedIncidentId}
-            displayTimezone={fixture.display_timezone}
-            onSelect={setSelectedIncidentId}
-          />
+          <div className="incident-filters">
+            <div className="planner-field">
+              <label htmlFor="incident-search">Search reports</label>
+              <input
+                id="incident-search"
+                type="search"
+                placeholder="ID, complaint or location"
+                value={search}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                  setSelectedIncidentId(null);
+                }}
+                aria-controls="incident-results"
+              />
+            </div>
+
+            <div className="planner-field">
+              <label htmlFor="incident-classification">
+                Safety classification
+              </label>
+              <select
+                id="incident-classification"
+                value={classificationFilter}
+                onChange={(event) => {
+                  setClassificationFilter(event.target.value);
+                  setSelectedIncidentId(null);
+                }}
+                aria-controls="incident-results"
+              >
+                <option value="all">All reports</option>
+                <option value="flood">Flood-rule matches</option>
+                <option value="road_blockage">
+                  Road-blockage-rule matches
+                </option>
+                <option value="skipped">
+                  Outside current safety rules
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <p role="status" aria-live="polite" aria-atomic="true">
+            Showing {filteredIncidents.length} of{" "}
+            {fixture.incidents.length} sample reports · {locatedReports}{" "}
+            located · {filteredIncidents.length - locatedReports} without
+            map locations.
+          </p>
+
+          <div id="incident-results" className="incident-results">
+            <IncidentList
+              incidents={filteredIncidents}
+              selectedIncidentId={selectedIncidentId}
+              displayTimezone={fixture.display_timezone}
+              onSelect={setSelectedIncidentId}
+            />
+          </div>
         </section>
 
         <details className="planner-disclosure">
@@ -76,7 +151,7 @@ export default function IncidentWorkspace({
         </div>
 
         <CityMapLoader
-          incidents={fixture.incidents}
+          incidents={filteredIncidents}
           selectedIncidentId={selectedIncidentId}
           onSelect={setSelectedIncidentId}
         />
