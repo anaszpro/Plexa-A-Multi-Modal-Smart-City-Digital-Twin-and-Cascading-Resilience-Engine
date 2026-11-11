@@ -467,3 +467,92 @@ h2 {
 .incident-map-swatch.skipped {
   background: #64748b;
 }
+
+
+/* Reports-first workspace */
+
+.incidents-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.incident-feed {
+  min-width: 0;
+}
+
+.planner-disclosure {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.planner-disclosure > summary {
+  padding: 10px 4px;
+  color: var(--foreground);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.planner-content {
+  padding-top: 16px;
+}
+
+.planner-content .field-help {
+  margin-top: 0;
+}
+
+/* Use independent panel scrolling on larger desktop screens. */
+
+@media (min-width: 1200px) and (min-height: 650px) {
+  .dashboard {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100dvh;
+    min-height: 0;
+  }
+
+  .dashboard-workspace {
+    min-height: 0;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .dashboard-workspace > * {
+    min-height: 0;
+  }
+
+  .incidents-panel {
+    gap: 16px;
+    overflow: hidden;
+  }
+
+  .incident-feed {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .incident-feed > .incident-list {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    margin-top: 16px;
+    overflow-y: auto;
+  }
+
+  .planner-disclosure {
+    flex-shrink: 0;
+    max-height: 55%;
+    overflow-y: auto;
+  }
+
+  .details-panel {
+    overflow-y: auto;
+  }
+
+  .map-panel .city-map {
+    min-height: 0;
+  }
+}

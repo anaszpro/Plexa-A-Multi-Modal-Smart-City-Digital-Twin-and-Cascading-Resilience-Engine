@@ -28,13 +28,14 @@ export default function IncidentWorkspace({
   return (
     <>
       <aside
-        className="dashboard-panel response-panel"
-        aria-labelledby="response-heading"
+        className="dashboard-panel incidents-panel"
+        aria-labelledby="incidents-heading"
       >
-        <ResponsePlanner />
-
-        <section aria-labelledby="incidents-heading">
-          <h2 id="incidents-heading">Incident reports</h2>
+        <section
+          className="incident-feed"
+          aria-labelledby="incidents-heading"
+        >
+          <h1 id="incidents-heading">Incident reports</h1>
 
           <p>
             Sample: {fixture.incidents.length} reports · {locatedReports}{" "}
@@ -57,6 +58,14 @@ export default function IncidentWorkspace({
             onSelect={setSelectedIncidentId}
           />
         </section>
+
+        <details className="planner-disclosure">
+          <summary>Response planner</summary>
+
+          <div className="response-panel planner-content">
+            <ResponsePlanner />
+          </div>
+        </details>
       </aside>
 
       <section className="map-panel" aria-labelledby="map-heading">
@@ -66,9 +75,9 @@ export default function IncidentWorkspace({
         </div>
 
         <CityMapLoader
-        incidents={fixture.incidents}
-        selectedIncidentId={selectedIncidentId}
-        onSelect={setSelectedIncidentId}
+          incidents={fixture.incidents}
+          selectedIncidentId={selectedIncidentId}
+          onSelect={setSelectedIncidentId}
         />
       </section>
 
@@ -81,7 +90,9 @@ export default function IncidentWorkspace({
         {selectedIncident ? (
           <div className="incident-details">
             <h3>{selectedIncident.complaint_type}</h3>
-            <p>{selectedIncident.descriptor || "No descriptor supplied"}</p>
+            <p>
+              {selectedIncident.descriptor || "No descriptor supplied"}
+            </p>
 
             <dl>
               <dt>Report ID</dt>

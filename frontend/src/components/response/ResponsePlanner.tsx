@@ -1,7 +1,7 @@
 export default function ResponsePlanner() {
   return (
     <section aria-labelledby="response-heading">
-      <h1 id="response-heading">Response planner</h1>
+      <h2 id="response-heading">Response planner</h2>
       <p>Choose the starting point and destination for your response.</p>
 
       <div className="planner-fields">
