@@ -556,3 +556,49 @@ h2 {
     min-height: 0;
   }
 }
+
+
+/* Report interpretation and evidence */
+
+.incident-interpretation {
+  padding: 12px;
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  background: #edf3ff;
+  font-size: 13px;
+}
+
+.incident-evidence {
+  margin-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.incident-evidence > summary {
+  padding: 14px 0;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.incident-evidence[open] > summary {
+  border-bottom: 1px solid var(--border);
+}
+
+.incident-evidence dl {
+  margin-top: 16px;
+}
+
+.incident-evidence h4 {
+  margin: 20px 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.incident-evidence ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+}
+
+.incident-evidence li {
+  margin-top: 6px;
+}

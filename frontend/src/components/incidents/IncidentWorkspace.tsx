@@ -5,6 +5,7 @@ import type { IncidentFixture } from "@/types/incident";
 import ResponsePlanner from "@/components/response/ResponsePlanner";
 import CityMapLoader from "@/components/map/CityMapLoader";
 import IncidentList from "./IncidentList";
+import IncidentDetails from "./IncidentDetails";
 
 interface IncidentWorkspaceProps {
   fixture: IncidentFixture;
@@ -86,43 +87,7 @@ export default function IncidentWorkspace({
         aria-labelledby="details-heading"
       >
         <h2 id="details-heading">Report details</h2>
-
-        {selectedIncident ? (
-          <div className="incident-details">
-            <h3>{selectedIncident.complaint_type}</h3>
-            <p>
-              {selectedIncident.descriptor || "No descriptor supplied"}
-            </p>
-
-            <dl>
-              <dt>Report ID</dt>
-              <dd>{selectedIncident.incident_id}</dd>
-
-              <dt>Location</dt>
-              <dd>
-                {selectedIncident.location.location_text ||
-                  "Address unavailable"}
-              </dd>
-
-              <dt>Borough</dt>
-              <dd>{selectedIncident.location.borough}</dd>
-
-              <dt>Verification</dt>
-              <dd>Unverified</dd>
-
-              <dt>Lifecycle</dt>
-              <dd>Active in the supplied snapshot</dd>
-            </dl>
-
-            {selectedIncident.location.coordinate_status === "missing" && (
-              <p>Map location unavailable for this report.</p>
-            )}
-          </div>
-        ) : (
-          <p className="empty-state">
-            Select a report to inspect its details.
-          </p>
-        )}
+        <IncidentDetails incident={selectedIncident} />
       </aside>
     </>
   );
