@@ -2,17 +2,21 @@
 
 import { useState } from "react";
 import type { IncidentFixture } from "@/types/incident";
+import type { RouteResponse } from "@/lib/routes/schema";
 import ResponsePlanner from "@/components/response/ResponsePlanner";
 import CityMapLoader from "@/components/map/CityMapLoader";
+import RouteComparison from "@/components/routes/RouteComparison";
 import IncidentList from "./IncidentList";
 import IncidentDetails from "./IncidentDetails";
 
 interface IncidentWorkspaceProps {
   fixture: IncidentFixture;
+  routeResponse?: RouteResponse;
 }
 
 export default function IncidentWorkspace({
   fixture,
+  routeResponse,
 }: IncidentWorkspaceProps) {
   const [selectedIncidentId, setSelectedIncidentId] =
     useState<string | null>(null);
@@ -60,6 +64,12 @@ export default function IncidentWorkspace({
   const locatedReports = filteredIncidents.filter(
     (incident) => incident.location.coordinate_status === "provided"
   ).length;
+
+  function selectRouteWarning(incidentId: string) {
+    setSearch("");
+    setClassificationFilter("all");
+    setSelectedIncidentId(incidentId);
+  }
 
   return (
     <>
@@ -151,11 +161,23 @@ export default function IncidentWorkspace({
           </div>
         </section>
 
-        <details className="planner-disclosure">
-          <summary>Response planner</summary>
+        <details
+          className="planner-disclosure"
+          open={routeResponse !== undefined}
+        >
+          <summary>
+            {routeResponse ? "Route comparison" : "Response planner"}
+          </summary>
 
           <div className="response-panel planner-content">
-            <ResponsePlanner />
+            {routeResponse ? (
+              <RouteComparison
+                response={routeResponse}
+                onSelectIncident={selectRouteWarning}
+              />
+            ) : (
+              <ResponsePlanner />
+            )}
           </div>
         </details>
       </aside>
@@ -175,6 +197,7 @@ export default function IncidentWorkspace({
           incidents={filteredIncidents}
           selectedIncidentId={selectedIncidentId}
           onSelect={setSelectedIncidentId}
+          routeResponse={routeResponse}
         />
       </section>
 
