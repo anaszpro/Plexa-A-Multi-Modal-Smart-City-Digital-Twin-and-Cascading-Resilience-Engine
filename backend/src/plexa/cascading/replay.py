@@ -505,6 +505,12 @@ def load_2024_climate_hour(clock, python_path, inputs_path, model_path, common_c
     return normalize_2024_climate_hour(clock, native, exit_code, common_contexts, gaps)
 
 
+def release_reports_at(clock, report_index, warning_index):
+    reports = report_index.loc[report_index["availability_utc_assumed"].le(clock["as_of_utc"])]
+    warning_links = warning_index.loc[warning_index["incident_id"].isin(reports["incident_id"])]
+    return reports, warning_links
+
+
 def assemble_replay_hour(
     clock, *, common_contexts, mobility, climate, traversals, direction_bridge,
     base_arcs, report_index, warning_index,
@@ -543,8 +549,7 @@ def assemble_replay_hour(
         raise ValueError("Some forecast links are missing from the supplied graph.")
     arcs["mobility_edge_status"] = arcs["mobility_edge_status"].fillna("no_model_link")
 
-    reports = report_index.loc[report_index["availability_utc_assumed"].le(clock["as_of_utc"])]
-    warning_links = warning_index.loc[warning_index["incident_id"].isin(reports["incident_id"])]
+    reports, warning_links = release_reports_at(clock, report_index, warning_index)
     return {
         "clock": clock,
         "climate": climate,

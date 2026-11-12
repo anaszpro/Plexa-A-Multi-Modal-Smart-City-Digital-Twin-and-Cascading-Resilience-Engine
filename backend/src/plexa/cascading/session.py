@@ -23,8 +23,10 @@ from .replay import (
     load_ida_climate_hour,
     load_mobility_hour,
     make_clock,
+    release_reports_at,
 )
 from .safety import (
+    HISTORICAL_SAFETY_FEED,
     build_ida_safety_view,
     match_demo_warning_links,
     release_2024_safety_reports,
@@ -50,6 +52,7 @@ class ReplaySession:
         self.arcs = base_arcs.loc[base_arcs["source_fid"].isin(demo_source_fids(self.roads))].copy()
         self.endpoint_nodes = self._build_endpoint_nodes()
         self.safety_indexes = {}
+        self._last_2024_climate = None
 
     def _build_endpoint_nodes(self):
         points = pyogrio.read_dataframe(self.lion_path, layer="node", columns=["NODEID"])
@@ -87,9 +90,14 @@ class ReplaySession:
             nodes[connection].gt(0) & np.isfinite(nodes["x_m"]) & np.isfinite(nodes["y_m"])
         ].reset_index()
         usable["distance_from_pin_m"] = np.hypot(usable["x_m"] - x_m, usable["y_m"] - y_m)
-        return usable.sort_values(["distance_from_pin_m", "node_index"]).head(limit)[[
+        candidates = usable.sort_values(["distance_from_pin_m", "node_index"]).head(limit).copy()
+        to_wgs84 = Transformer.from_crs("EPSG:32618", "EPSG:4326", always_xy=True)
+        candidates["longitude"], candidates["latitude"] = to_wgs84.transform(
+            candidates["x_m"].to_numpy(), candidates["y_m"].to_numpy()
+        )
+        return candidates[[
             "node_index", "node_id", "node_level", "distance_from_pin_m",
-            "outgoing_connections", "incoming_connections",
+            "outgoing_connections", "incoming_connections", "latitude", "longitude",
         ]]
 
     def _safety_index(self, scenario):
@@ -101,12 +109,31 @@ class ReplaySession:
                 timed, _ = build_ida_safety_view(safety, window)
                 reports = release_ida_reports(last_clock, timed)
             else:
-                feed = safety / "artifacts/safety_feed_2024_2025_v1/reports_2024_2025.csv"
+                feed = safety / HISTORICAL_SAFETY_FEED
                 reports, _ = release_2024_safety_reports(feed, last_clock)
 
             links = match_demo_warning_links(reports, self.lion_path, self.roads)
             self.safety_indexes[scenario] = reports, links
         return self.safety_indexes[scenario]
+
+    def incidents_at(self, clock):
+        """Release Safety reports without running the forecast models."""
+        return release_reports_at(clock, *self._safety_index(clock["scenario"]))
+
+    def _load_2024_climate(self, clock):
+        if self.climate_python is None:
+            raise ValueError("Supply the frozen Climate environment's Python for 2024 replay.")
+        target = clock["target_start_utc"]
+        cached = self._last_2024_climate
+        if cached is not None and cached[0] == target:
+            return cached[1].copy()
+
+        climate = load_2024_climate_hour(
+            clock, self.climate_python, self.locations["Climate 2024 inputs"],
+            self.locations["Climate model"], self.common_contexts,
+        )
+        self._last_2024_climate = target, climate
+        return climate.copy()
 
     def load_hour(self, clock):
         """Prepare an hourly snapshot and release the reports available by its cutoff."""
@@ -119,12 +146,7 @@ class ReplaySession:
                 clock, self.locations["Climate Ida extension"], self.common_contexts
             )
         else:
-            if self.climate_python is None:
-                raise ValueError("Supply the frozen Climate environment's Python for 2024 replay.")
-            climate = load_2024_climate_hour(
-                clock, self.climate_python, self.locations["Climate 2024 inputs"],
-                self.locations["Climate model"], self.common_contexts,
-            )
+            climate = self._load_2024_climate(clock)
 
         reports, warning_links = self._safety_index(scenario)
         return assemble_replay_hour(

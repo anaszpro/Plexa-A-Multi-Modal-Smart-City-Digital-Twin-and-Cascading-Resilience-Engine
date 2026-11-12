@@ -13,12 +13,12 @@ import shapely
 from .engine import demo_source_fids
 
 WARNING_RULES = ("S311-02", "S311-09", "S311-10")
+IDA_SAFETY_DIRECTORY = Path("artifacts/ida_311_valid_input_v1_0_1")
+HISTORICAL_SAFETY_FEED = Path("artifacts/safety_feed_2024_2025_v1/reports_2024_2025.csv")
 
 
 def build_ida_safety_view(safety_directory, scenario_window):
-    source_directory = (
-        Path(safety_directory) / "artifacts/ida_311_valid_input_v1_0_1"
-    )
+    source_directory = Path(safety_directory) / IDA_SAFETY_DIRECTORY
     request_path = source_directory / "request.json"
     result_path = source_directory / "result.json"
 
