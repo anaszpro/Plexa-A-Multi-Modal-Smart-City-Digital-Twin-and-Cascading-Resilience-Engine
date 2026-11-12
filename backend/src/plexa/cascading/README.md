@@ -51,4 +51,30 @@ The Python call returns a JSON-ready `plexa.route.response.v0.1.0` object. It co
 
 Routing cost uses distance-equivalent metres. Known traffic volume adds up to 30% of edge length at 600 estimated vehicles per hour. Missing traffic adds 30%. An active road-relevant Safety report or a native Climate alert adds 175 m once per warned segment. Climate gaps appear in `climate_road_statuses` and produce null climate values on affected edges. The prototype uses a directed LION graph with the approved demo access filter and mapped U-turn links. Vehicle-specific access and turn restrictions require separate validation for operational use.
 
-The notebook and fixtures are static frontend handoff examples. `ReplaySession` is the local Python entry point.
+## Local HTTP service
+
+The HTTP entry point uses FastAPI and Uvicorn in the main backend environment. It listens on `127.0.0.1:8000` by default. Store local asset paths in `tmp/cascading-api.local.json`, which Git ignores. The JSON object takes a `locations` object with the keys in the table above and an optional `climate_python` path. Relative paths resolve next to the config file. Ida can run with its own assets while 2024 shows as unavailable.
+
+From the repository root in PowerShell:
+
+```powershell
+Push-Location .\backend\src
+try {
+    & ..\..\.venv\Scripts\python.exe -B -m plexa.cascading.api --config ..\..\tmp\cascading-api.local.json
+} finally {
+    Pop-Location
+}
+```
+
+Open `/docs` on the local service for the request parameters. Browser requests from `http://localhost:3000` and `http://127.0.0.1:3000` are allowed by CORS. The server uses one `ReplaySession` per process. Incident and route calls serialize access to replay preparation. The first request for a scenario indexes its Safety reports. Selecting a new 2024 routing hour runs the frozen Climate predictor. The session retains the most recent 2024 Climate result in memory for repeat route requests at that hour.
+
+| Method and path | Inputs and response |
+| --- | --- |
+| `GET /health` | Overall readiness and per-scenario `state`, `missing_assets`, `start_utc`, and `end_utc_exclusive`. `ready` means the graph is initialized and the required asset entry files exist. |
+| `GET /api/v1/incidents` | `scenario`, `as_of_utc`, optional `limit` (default 100, maximum 200), `offset` (default 0), and `incident_id` for looking up a route warning. |
+| `GET /api/v1/endpoint-candidates` | `latitude`, `longitude`, `role` (`origin` or `destination`), optional `limit` (default 5, maximum 20). Each candidate includes its `node_id`, `node_level`, coordinates, distance from the pin in metres, and incoming and outgoing connection counts. |
+| `POST /api/v1/routes` | The same request body and `plexa.route.response.v0.1.0` response as the route fixture. Use actual node IDs and levels returned by the candidate endpoint. |
+
+The incident response uses `schema_id: "plexa.incidents.response.v0.1.0"` with `scenario_id`, `as_of_utc`, `display_timezone`, `pagination`, and `incidents`. The page order is latest available first, then incident ID. Read `pagination.next_offset` for the next page and `pagination.total` for the matching count. An empty result returns an empty array. Each record includes the same nested location, time, source, classification, and lifecycle fields as the fixture, with live historical values and nullable fields where the source supplies none. `coordinate_status` is `provided` or `missing`. `road_association_status: "matched"` identifies a report with a usable demo-network warning link. `not_available` means the response has no such link. All released reports are available to the list, including reports that were skipped by classification or lack coordinates.
+
+Errors use an `error` object with `code` and `message`. Invalid inputs return HTTP 422, unavailable local assets or an uninitialized service return 503, and processing failures return 500. A valid request with no directed path returns HTTP 200 and `route_found: false`. The service exposes read-only replay. Operator action state and persistence remain follow-up work.

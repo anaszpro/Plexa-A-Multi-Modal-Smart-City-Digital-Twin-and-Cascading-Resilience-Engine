@@ -22,6 +22,10 @@ DISPLAY_TIMEZONE = "America/New_York"
 ENDPOINT_COLUMNS = ["from_node_index", "to_node_index"]
 
 
+class UnknownEndpointError(ValueError):
+    """The selected node ID and level are absent from the routing graph."""
+
+
 def demo_source_fids(roads: pd.DataFrame) -> pd.Series:
     """Select allowed source rows from the prepared vehicle network."""
     features = roads["FeatureTyp"].astype("string").str.strip()
@@ -88,7 +92,7 @@ def _resolve_endpoint(selection: Mapping, nodes: pd.MultiIndex) -> int:
     try:
         return int(nodes.get_loc((node_id, node_level)))
     except KeyError as error:
-        raise ValueError(f"No routing node matches {(node_id, node_level)}.") from error
+        raise UnknownEndpointError(f"No routing node matches {(node_id, node_level)}.") from error
 
 
 def _nullable_float(value: object) -> float | None:
