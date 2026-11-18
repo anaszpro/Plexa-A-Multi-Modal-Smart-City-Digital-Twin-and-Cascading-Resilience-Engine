@@ -581,7 +581,7 @@ h2 {
     flex-shrink: 0;
   }
 
-  .map-panel .city-map {
+  .dashboard-workspace .map-panel .city-map {
     min-height: 0;
   }
 }

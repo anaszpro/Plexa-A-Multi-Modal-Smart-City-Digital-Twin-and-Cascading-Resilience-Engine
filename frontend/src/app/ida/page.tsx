@@ -1,23 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { z } from "zod";
-
-const incidentPageSchema = z.object({
-  pagination: z.object({
-    total: z.number().int().nonnegative(),
-    next_offset: z.number().int().nonnegative().nullable(),
-  }),
-  incidents: z.array(
-    z.object({
-      incident_id: z.string(),
-      complaint_type: z.string(),
-      descriptor: z.string().nullable(),
-    }),
-  ),
-});
-
-type IncidentPage = z.infer<typeof incidentPageSchema>;
+import IncidentDetails from "@/components/incidents/IncidentDetails";
+import IncidentList from "@/components/incidents/IncidentList";
+import CityMapLoader from "@/components/map/CityMapLoader";
+import {
+  apiIncidentPageSchema,
+  type ApiIncidentPage,
+} from "@/lib/incidents/api-schema";
 
 async function fetchIncidents(offset: number, signal?: AbortSignal) {
   const params = new URLSearchParams({
@@ -26,17 +16,26 @@ async function fetchIncidents(offset: number, signal?: AbortSignal) {
     limit: "20",
     offset: String(offset),
   });
+
   const response = await fetch(`/api/ida/incidents?${params}`, { signal });
 
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-  return incidentPageSchema.parse(await response.json());
+  return apiIncidentPageSchema.parse(await response.json());
 }
 
 export default function IdaPage() {
-  const [page, setPage] = useState<IncidentPage | null>(null);
+  const [page, setPage] = useState<ApiIncidentPage | null>(null);
+  const [selectedIncidentId, setSelectedIncidentId] = useState<string | null>(
+    null,
+  );
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const selectedIncident =
+    page?.incidents.find(
+      (incident) => incident.incident_id === selectedIncidentId,
+    ) ?? null;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -64,7 +63,7 @@ export default function IdaPage() {
     try {
       const nextPage = await fetchIncidents(nextOffset);
       setPage((currentPage) => ({
-        pagination: nextPage.pagination,
+        ...nextPage,
         incidents: [...(currentPage?.incidents ?? []), ...nextPage.incidents],
       }));
     } catch {
@@ -79,25 +78,40 @@ export default function IdaPage() {
       <h1>Ida incident reports</h1>
       {error && <p role="alert">{error}</p>}
       {!error && !page && <p role="status">Loading incident reports…</p>}
+
       {page && (
         <>
           <p role="status">
             Showing {page.incidents.length} of{" "}
             {page.pagination.total.toLocaleString("en-US")} reports.
           </p>
-          <ul>
-            {page.incidents.map((incident) => (
-              <li key={incident.incident_id}>
-                <strong>{incident.complaint_type}</strong>
-                {incident.descriptor ? ` — ${incident.descriptor}` : ""}
-              </li>
-            ))}
-          </ul>
+
+          <IncidentList
+            incidents={page.incidents}
+            selectedIncidentId={selectedIncidentId}
+            displayTimezone={page.display_timezone}
+            onSelect={setSelectedIncidentId}
+          />
+
           {page.pagination.next_offset !== null && (
             <button type="button" onClick={loadMore} disabled={loadingMore}>
               {loadingMore ? "Loading…" : "Load more reports"}
             </button>
           )}
+
+          <section className="map-panel" aria-labelledby="ida-map-heading">
+            <h2 id="ida-map-heading">Ida incident map</h2>
+            <CityMapLoader
+              incidents={page.incidents}
+              selectedIncidentId={selectedIncidentId}
+              onSelect={setSelectedIncidentId}
+            />
+          </section>
+
+          <section aria-labelledby="ida-report-details">
+            <h2 id="ida-report-details">Report details</h2>
+            <IncidentDetails incident={selectedIncident} />
+          </section>
         </>
       )}
     </main>

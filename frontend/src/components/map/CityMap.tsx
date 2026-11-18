@@ -10,29 +10,37 @@ import {
   Tooltip,
   useMap,
 } from "react-leaflet";
-import type { CityMapProps } from "./types";
-import type { Incident } from "@/types/incident";
 import type { RouteResponse } from "@/lib/routes/schema";
+import type { CityMapProps } from "./types";
 import "leaflet/dist/leaflet.css";
 
-function markerAppearance(incident: Incident) {
-  if (incident.classification.status === "skipped") {
+function markerAppearance(incident: CityMapProps["incidents"][number]) {
+  const { status, hazard_type: hazardType } = incident.classification;
+
+  if (status === "skipped") {
     return {
       color: "#64748b",
       label: "Outside current safety rules",
     };
   }
 
-  if (incident.classification.hazard_type === "flood") {
+  if (status === "ok" && hazardType === "flood") {
     return {
       color: "#2459b8",
       label: "Flood-rule match",
     };
   }
 
+  if (status === "ok" && hazardType === "road_blockage") {
+    return {
+      color: "#b45309",
+      label: "Road-blockage-rule match",
+    };
+  }
+
   return {
-    color: "#b45309",
-    label: "Road-blockage-rule match",
+    color: "#64748b",
+    label: "Safety classification unavailable",
   };
 }
 
@@ -168,14 +176,12 @@ export default function CityMap({
       incident.location.longitude !== null
   );
 
-  const selectedIncident = incidents.find(
+  const selectedIncident = locatedIncidents.find(
     (incident) => incident.incident_id === selectedIncidentId
   );
 
-  const selectedLatitude =
-    selectedIncident?.location.latitude ?? null;
-  const selectedLongitude =
-    selectedIncident?.location.longitude ?? null;
+  const selectedLatitude = selectedIncident?.location.latitude ?? null;
+  const selectedLongitude = selectedIncident?.location.longitude ?? null;
 
   const canZoom =
     map !== null &&
@@ -261,8 +267,7 @@ export default function CityMap({
           }
 
           const appearance = markerAppearance(incident);
-          const isSelected =
-            incident.incident_id === selectedIncidentId;
+          const isSelected = incident.incident_id === selectedIncidentId;
 
           return (
             <CircleMarker
@@ -281,7 +286,9 @@ export default function CityMap({
             >
               <Tooltip direction="top">
                 <div>
-                  <strong>{incident.complaint_type}</strong>
+                  <strong>
+                    {incident.complaint_type ?? "Unknown complaint type"}
+                  </strong>
                   <br />
                   {incident.incident_id}
                   <br />
@@ -293,10 +300,7 @@ export default function CityMap({
         })}
       </MapContainer>
 
-      <div
-        className="incident-map-legend"
-        aria-label="Map legend"
-      >
+      <div className="incident-map-legend" aria-label="Map legend">
         {routeResponse?.route_found && (
           <>
             <span>
@@ -329,7 +333,7 @@ export default function CityMap({
 
         <span>
           <i className="incident-map-swatch skipped" aria-hidden="true" />
-          Outside current safety rules
+          Outside current safety rules or classification unavailable
         </span>
 
         <span>Selected report: larger marker with dark outline.</span>

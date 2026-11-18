@@ -1,8 +1,15 @@
 import type { Incident } from "@/types/incident";
+import type { ApiIncidentPage } from "@/lib/incidents/api-schema";
 
 interface IncidentDetailsProps {
-  incident: Incident | null;
+  incident: Incident | ApiIncidentPage["incidents"][number] | null;
 }
+
+const roadAssociationLabels = {
+  matched: "Matched",
+  not_assessed: "Not assessed",
+  not_available: "No road association available",
+};
 
 export default function IncidentDetails({
   incident,
@@ -17,22 +24,26 @@ export default function IncidentDetails({
 
   const classification = incident.classification;
   const isSynthetic = incident.source.kind === "synthetic";
+  const reportedAt = incident.time.created_utc_assumed;
 
-  const classificationLabel =
-    classification.status === "skipped"
-      ? "Outside current safety rules"
-      : classification.hazard_type === "flood"
-        ? "Flood-rule match"
-        : "Road-blockage-rule match";
+  let classificationLabel = "Safety classification unavailable";
+
+  if (classification.status === "skipped") {
+    classificationLabel = "Outside current safety rules";
+  } else if (classification.status === "ok") {
+    if (classification.hazard_type === "flood") {
+      classificationLabel = "Flood-rule match";
+    } else if (classification.hazard_type === "road_blockage") {
+      classificationLabel = "Road-blockage-rule match";
+    }
+  }
 
   const roadAssociationLabel =
-    incident.road_association_status === "matched"
-      ? "Matched"
-      : "Not assessed";
+    roadAssociationLabels[incident.road_association_status];
 
   return (
     <div className="incident-details">
-      <h3>{incident.complaint_type}</h3>
+      <h3>{incident.complaint_type ?? "Unknown complaint type"}</h3>
       <p>{incident.descriptor || "No descriptor supplied"}</p>
 
       {isSynthetic && (
@@ -46,9 +57,7 @@ export default function IncidentDetails({
         <dd>{incident.incident_id}</dd>
 
         <dt>Location</dt>
-        <dd>
-          {incident.location.location_text || "Address unavailable"}
-        </dd>
+        <dd>{incident.location.location_text || "Address unavailable"}</dd>
 
         <dt>Borough</dt>
         <dd>{incident.location.borough || "Not provided"}</dd>
@@ -82,16 +91,18 @@ export default function IncidentDetails({
 
         <dl>
           <dt>Original reported timestamp</dt>
-          <dd>{incident.time.created_raw}</dd>
+          <dd>{incident.time.created_raw ?? "Not provided"}</dd>
 
           <dt>Assumed original timezone</dt>
           <dd>America/New_York</dd>
 
           <dt>Assumed creation time — UTC</dt>
           <dd>
-            <time dateTime={incident.time.created_utc_assumed}>
-              {incident.time.created_utc_assumed}
-            </time>
+            {reportedAt ? (
+              <time dateTime={reportedAt}>{reportedAt}</time>
+            ) : (
+              "Report time unavailable"
+            )}
           </dd>
 
           <dt>Assumed availability time — UTC</dt>
@@ -112,13 +123,13 @@ export default function IncidentDetails({
           <dd>{isSynthetic ? "Synthetic" : "Historical"}</dd>
 
           <dt>Source dataset</dt>
-          <dd>{incident.source.dataset_id}</dd>
+          <dd>{incident.source.dataset_id ?? "Not provided"}</dd>
 
           <dt>Source record ID</dt>
-          <dd>{incident.source.record_id}</dd>
+          <dd>{incident.source.record_id ?? "Not provided"}</dd>
 
           <dt>Source snapshot</dt>
-          <dd>{incident.source.snapshot_id}</dd>
+          <dd>{incident.source.snapshot_id ?? "Not provided"}</dd>
 
           <dt>Matched rule</dt>
           <dd>{classification.rule_id ?? "No rule matched"}</dd>
@@ -130,11 +141,11 @@ export default function IncidentDetails({
             </>
           )}
 
-          <dt>Uncalibrated rule score</dt>
+          <dt>Rule score</dt>
           <dd>
-            {classification.score
-              ? `${classification.score.value} — a rule estimate, not a probability.`
-              : "Not provided"}
+            {classification.score?.value ?? "Not provided"}
+            {classification.score?.calibrated === false &&
+              " (uncalibrated rule estimate)"}
           </dd>
 
           <dt>Rule-assigned severity</dt>
