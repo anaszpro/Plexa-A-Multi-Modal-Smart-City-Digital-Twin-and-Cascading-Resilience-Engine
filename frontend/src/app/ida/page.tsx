@@ -40,13 +40,18 @@ async function fetchIncidents(
   asOfUtc: string,
   offset: number,
   signal?: AbortSignal,
+  incidentId?: string,
 ) {
   const params = new URLSearchParams({
     scenario: "ida",
     as_of_utc: asOfUtc,
-    limit: "20",
+    limit: incidentId ? "1" : "20",
     offset: String(offset),
   });
+
+  if (incidentId) {
+    params.set("incident_id", incidentId);
+  }
 
   const response = await fetch(`/api/ida/incidents?${params}`, { signal });
 
@@ -64,6 +69,13 @@ export default function IdaPage() {
   const [selectedIncidentId, setSelectedIncidentId] = useState<string | null>(
     null,
   );
+  const [fetchedIncident, setFetchedIncident] =
+    useState<ApiIncidentPage["incidents"][number] | null>(null);
+  const [incidentLookupLoading, setIncidentLookupLoading] = useState(false);
+  const [incidentLookupError, setIncidentLookupError] = useState<string | null>(
+    null,
+  );
+
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectionRole, setSelectionRole] = useState<MapSelectionRole | null>(
@@ -85,6 +97,7 @@ export default function IdaPage() {
   const requestControllerRef = useRef<AbortController | null>(null);
   const candidateControllerRef = useRef<AbortController | null>(null);
   const routeControllerRef = useRef<AbortController | null>(null);
+  const lookupControllerRef = useRef<AbortController | null>(null);
 
   const asOfUtc = getAsOfUtc(frameIndex);
   const activePage =
@@ -93,7 +106,73 @@ export default function IdaPage() {
   const selectedIncident =
     activePage?.incidents.find(
       (incident) => incident.incident_id === selectedIncidentId,
-    ) ?? null;
+    ) ??
+    (fetchedIncident?.incident_id === selectedIncidentId
+      ? fetchedIncident
+      : null);
+  const clearIncidentLookup = useCallback(() => {
+    lookupControllerRef.current?.abort();
+    lookupControllerRef.current = null;
+    setFetchedIncident(null);
+    setIncidentLookupLoading(false);
+    setIncidentLookupError(null);
+  }, []);
+
+  function handleIncidentSelect(incidentId: string) {
+    clearIncidentLookup();
+    setSelectedIncidentId(incidentId);
+  }
+
+  async function handleWarningIncidentSelect(incidentId: string) {
+    const alreadyLoaded = activePage?.incidents.some(
+      (incident) => incident.incident_id === incidentId,
+    );
+
+    clearIncidentLookup();
+    setSelectedIncidentId(incidentId);
+
+    if (alreadyLoaded) return;
+
+    const controller = new AbortController();
+    lookupControllerRef.current = controller;
+    setIncidentLookupLoading(true);
+
+    try {
+      const result = await fetchIncidents(
+        asOfUtc,
+        0,
+        controller.signal,
+        incidentId,
+      );
+
+      if (controller.signal.aborted) return;
+
+      const incident = result.incidents.find(
+        (item) => item.incident_id === incidentId,
+      );
+
+      if (incident) {
+        setFetchedIncident(incident);
+      } else {
+        setIncidentLookupError(
+          "That report could not be found for this replay hour.",
+        );
+      }
+    } catch (requestError) {
+      if (!controller.signal.aborted) {
+        setIncidentLookupError(
+          requestError instanceof Error
+            ? requestError.message
+            : "Could not load the selected report.",
+        );
+      }
+    } finally {
+      if (lookupControllerRef.current === controller) {
+        lookupControllerRef.current = null;
+        setIncidentLookupLoading(false);
+      }
+    }
+  }
 
   const clearRouteResult = useCallback(() => {
     routeControllerRef.current?.abort();
@@ -234,6 +313,7 @@ export default function IdaPage() {
     );
 
     requestControllerRef.current?.abort();
+    clearIncidentLookup();
     resetRoutePlanner();
     setPlaying(false);
     setPage(null);
@@ -258,6 +338,7 @@ export default function IdaPage() {
       })
       .catch(() => {
         if (!controller.signal.aborted) {
+          setPlaying(false);
           setError("Could not load Ida incident reports. Refresh to try again.");
         }
       });
@@ -272,12 +353,13 @@ export default function IdaPage() {
   }, [asOfUtc]);
 
   useEffect(() => {
-    if (!playing || frameIndex >= LAST_FRAME_INDEX) return;
+    if (!playing || !activePage || frameIndex >= LAST_FRAME_INDEX) return;
 
     const timer = window.setTimeout(() => {
       const nextIndex = Math.min(LAST_FRAME_INDEX, frameIndex + 1);
 
       requestControllerRef.current?.abort();
+      clearIncidentLookup();
       resetRoutePlanner();
       setPage(null);
       setSelectedIncidentId(null);
@@ -291,7 +373,7 @@ export default function IdaPage() {
     }, 1500);
 
     return () => window.clearTimeout(timer);
-  }, [frameIndex, playing, resetRoutePlanner]);
+  }, [activePage, clearIncidentLookup, frameIndex, playing, resetRoutePlanner]);
 
   async function loadMore() {
     const nextOffset = activePage?.pagination.next_offset;
@@ -487,7 +569,7 @@ export default function IdaPage() {
             incidents={activePage.incidents}
             selectedIncidentId={selectedIncidentId}
             displayTimezone={activePage.display_timezone}
-            onSelect={setSelectedIncidentId}
+            onSelect={handleIncidentSelect}
           />
 
           {activePage.pagination.next_offset !== null && (
@@ -501,7 +583,7 @@ export default function IdaPage() {
             <CityMapLoader
               incidents={activePage.incidents}
               selectedIncidentId={selectedIncidentId}
-              onSelect={setSelectedIncidentId}
+              onSelect={handleIncidentSelect}
               selectionRole={selectionRole}
               onMapPointSelect={handleMapPointSelect}
               routeResponse={routeResponse ?? undefined}
@@ -510,12 +592,16 @@ export default function IdaPage() {
           {routeResponse && (
             <RouteComparison
               response={routeResponse}
-              onSelectIncident={setSelectedIncidentId}
+              onSelectIncident={handleWarningIncidentSelect}
             />
           )}
 
           <section aria-labelledby="ida-report-details">
             <h2 id="ida-report-details">Report details</h2>
+            {incidentLookupLoading && (
+              <p role="status">Loading the report linked to this warning…</p>
+            )}
+            {incidentLookupError && <p role="alert">{incidentLookupError}</p>}
             <IncidentDetails incident={selectedIncident} />
           </section>
         </>
