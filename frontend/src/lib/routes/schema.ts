@@ -14,6 +14,31 @@ const nodeSchema = z.object({
   node_level: z.string().min(1),
 });
 
+const endpointCandidateSchema = z.object({
+  node_id: z.string().min(1),
+  node_level: z.string().min(1),
+  distance_from_pin_m: nonnegativeNumber,
+  outgoing_connections: z.number().int().nonnegative(),
+  incoming_connections: z.number().int().nonnegative(),
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+});
+
+export const endpointCandidatesResponseSchema = z.object({
+  schema_id: z.literal("plexa.endpoint_candidates.response.v0.1.0"),
+  role: z.enum(["origin", "destination"]),
+  pin: z.object({
+    latitude: z.number().min(-90).max(90),
+    longitude: z.number().min(-180).max(180),
+  }),
+  candidates: z.array(endpointCandidateSchema),
+});
+
+export type EndpointCandidate = z.infer<typeof endpointCandidateSchema>;
+export type EndpointCandidatesResponse = z.infer<
+  typeof endpointCandidatesResponseSchema
+>;
+
 const endpointSchema = nodeSchema.extend({
   latitude: z.number().min(-90).max(90),
   longitude: z.number().min(-180).max(180),
@@ -24,14 +49,24 @@ const positionSchema = z.tuple([
   z.number().min(-180).max(180),
   z.number().min(-90).max(90),
 ]);
+const lineStringGeometrySchema = z.object({
+  type: z.literal("LineString"),
+  coordinates: z.array(positionSchema).min(2),
+});
+
+const multiLineStringGeometrySchema = z.object({
+  type: z.literal("MultiLineString"),
+  coordinates: z.array(z.array(positionSchema).min(2)).min(1),
+});
+
 
 const edgeSchema = z.object({
   type: z.literal("Feature"),
 
-  geometry: z.object({
-    type: z.literal("LineString"),
-    coordinates: z.array(positionSchema).min(2),
-  }),
+  geometry: z.union([
+    lineStringGeometrySchema,
+    multiLineStringGeometrySchema,
+  ]),
 
   properties: z.object({
     lion_segment_id: z.string().min(1),

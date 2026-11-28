@@ -9,8 +9,9 @@ import {
   TileLayer,
   Tooltip,
   useMap,
+  useMapEvents,
 } from "react-leaflet";
-import type { RouteResponse } from "@/lib/routes/schema";
+import type { Route, RouteResponse } from "@/lib/routes/schema";
 import type { CityMapProps } from "./types";
 import "leaflet/dist/leaflet.css";
 
@@ -43,7 +44,13 @@ function markerAppearance(incident: CityMapProps["incidents"][number]) {
     label: "Safety classification unavailable",
   };
 }
+type RouteFeatureGeometry = Route["geometry"]["features"][number]["geometry"];
 
+function linesInGeometry(geometry: RouteFeatureGeometry) {
+  return geometry.type === "LineString"
+    ? [geometry.coordinates]
+    : geometry.coordinates;
+}
 function fitRoutes(map: LeafletMap, response: RouteResponse) {
   if (!response.route_found) {
     return;
@@ -59,8 +66,10 @@ function fitRoutes(map: LeafletMap, response: RouteResponse) {
     response.routes.recommended,
   ]) {
     for (const feature of route.geometry.features) {
-      for (const [longitude, latitude] of feature.geometry.coordinates) {
-        positions.push([latitude, longitude]);
+      for (const line of linesInGeometry(feature.geometry)) {
+        for (const [longitude, latitude] of line) {
+          positions.push([latitude, longitude]);
+        }
       }
     }
   }
@@ -103,27 +112,26 @@ function RouteLayers({ response }: { response: RouteResponse }) {
   return (
     <>
       {alternatives.map(({ key, label, color, dashArray, route }) =>
-        route.geometry.features.map((feature, index) => (
-          <Polyline
-            key={`${key}-${index}`}
-            positions={feature.geometry.coordinates.map(
-              ([longitude, latitude]): [number, number] => [
-                latitude,
-                longitude,
-              ]
-            )}
-            pathOptions={{
-              color,
-              weight: 5,
-              opacity: 0.9,
-              dashArray,
-            }}
-          >
-            <Tooltip sticky>
-              {label} · {feature.properties.street}
-            </Tooltip>
-          </Polyline>
-        ))
+        route.geometry.features.flatMap((feature, featureIndex) =>
+          linesInGeometry(feature.geometry).map((line, lineIndex) => (
+            <Polyline
+              key={`${key}-${featureIndex}-${lineIndex}`}
+              positions={line.map(
+                ([longitude, latitude]): [number, number] => [latitude, longitude],
+              )}
+              pathOptions={{
+                color,
+                weight: 5,
+                opacity: 0.9,
+                dashArray,
+              }}
+            >
+              <Tooltip sticky>
+                {label} · {feature.properties.street}
+              </Tooltip>
+            </Polyline>
+          )),
+        )
       )}
 
       <CircleMarker
@@ -160,12 +168,30 @@ function RouteLayers({ response }: { response: RouteResponse }) {
     </>
   );
 }
+function MapClickHandler({
+  onMapPointSelect,
+}: {
+  onMapPointSelect: NonNullable<CityMapProps["onMapPointSelect"]>;
+}) {
+  useMapEvents({
+    click(event) {
+      onMapPointSelect({
+        latitude: event.latlng.lat,
+        longitude: event.latlng.lng,
+      });
+    },
+  });
+
+  return null;
+}
 
 export default function CityMap({
   incidents,
   selectedIncidentId,
   onSelect,
   routeResponse,
+  selectionRole,
+  onMapPointSelect,
 }: CityMapProps) {
   const [map, setMap] = useState<LeafletMap | null>(null);
 
@@ -251,13 +277,20 @@ export default function CityMap({
         scrollWheelZoom={false}
         className="city-map"
       >
+
         <TileLayer
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           maxZoom={19}
         />
 
+        {selectionRole && onMapPointSelect && (
+          <MapClickHandler onMapPointSelect={onMapPointSelect} />
+        )}
+
         {routeResponse && <RouteLayers response={routeResponse} />}
+
+
 
         {locatedIncidents.map((incident) => {
           const { latitude, longitude } = incident.location;
