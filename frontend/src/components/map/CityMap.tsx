@@ -248,7 +248,7 @@ export default function CityMap({
                 }
               }}
             >
-              Show routes
+              Fit routes to map
             </button>
           )}
 

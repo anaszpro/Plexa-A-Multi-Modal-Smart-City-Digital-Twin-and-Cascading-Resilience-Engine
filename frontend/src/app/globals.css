@@ -766,3 +766,188 @@ h2 {
   color: var(--muted);
   font-size: 13px;
 }
+/* Ida replay dashboard */
+
+.ida-dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  max-width: 1680px;
+  margin-inline: auto;
+  padding: clamp(12px, 2vw, 28px);
+}
+
+.ida-dashboard > h1 {
+  font-size: clamp(22px, 2.5vw, 32px);
+  font-weight: 700;
+}
+
+.ida-replay-panel {
+  justify-content: flex-start;
+  gap: 10px 16px;
+  padding: 14px;
+}
+
+.ida-replay-panel > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ida-replay-panel input[type="range"] {
+  flex: 1 1 120px;
+  min-width: 0;
+  max-width: 320px;
+  min-height: 32px;
+  accent-color: var(--accent);
+}
+
+.ida-replay-panel > p:last-of-type {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ida-route-planner,
+.ida-incidents-panel,
+.ida-details-panel,
+.ida-map-column > .route-comparison {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.ida-route-planner {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.ida-route-planner > h2,
+.ida-route-planner > p,
+.ida-route-planner > button:last-of-type {
+  grid-column: 1 / -1;
+}
+
+.ida-route-planner > label,
+.ida-replay-panel > label {
+  font-weight: 600;
+}
+
+.ida-route-planner > select,
+.ida-route-planner > button,
+.ida-replay-panel > div > button,
+.ida-incidents-panel > button {
+  min-width: 0;
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 1px solid #8795a8;
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--foreground);
+  font: inherit;
+}
+
+.ida-route-planner > select {
+  width: 100%;
+}
+
+.ida-dashboard button:not(:disabled) {
+  cursor: pointer;
+}
+
+.ida-route-planner > button:last-of-type,
+.ida-replay-panel > div > button:nth-of-type(2) {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.ida-dashboard button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ida-workspace,
+.ida-map-column {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+  min-width: 0;
+}
+
+.ida-map-column .map-panel > h2 {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ida-map-column .city-map,
+.ida-map-column .map-placeholder {
+  min-height: clamp(300px, 46vh, 520px);
+}
+
+.ida-map-column .route-alternatives {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+}
+
+.ida-incidents-panel > p,
+.ida-details-panel > p {
+  margin-top: 6px;
+  color: var(--muted);
+}
+
+.ida-incidents-panel .incident-list {
+  margin-top: 8px;
+}
+
+.ida-incidents-panel > button {
+  width: 100%;
+  margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+  .ida-replay-panel > h2,
+  .ida-replay-panel > p:first-of-type,
+  .ida-replay-panel > div {
+    flex-basis: 100%;
+  }
+
+  .ida-replay-panel > div > button {
+    flex: 1 1 auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ida-workspace {
+    grid-template-columns:
+      minmax(190px, 1fr) minmax(0, 2.5fr) minmax(190px, 1fr);
+    grid-template-areas: "incidents map details";
+  }
+
+  .ida-map-column { grid-area: map; }
+  .ida-incidents-panel { grid-area: incidents; }
+
+  .ida-details-panel {
+    grid-area: details;
+    position: sticky;
+    top: 16px;
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+  }
+
+  .ida-route-planner {
+    grid-template-columns: auto auto minmax(0, 1fr) minmax(0, 1fr) auto;
+  }
+
+  .ida-route-planner > button:first-of-type { grid-area: 3 / 1; }
+  .ida-route-planner > button:nth-of-type(2) { grid-area: 3 / 2; }
+  .ida-route-planner > label[for="origin-candidate"] { grid-area: 2 / 3; }
+  .ida-route-planner > label[for="destination-candidate"] { grid-area: 2 / 4; }
+  .ida-route-planner > #origin-candidate { grid-area: 3 / 3; }
+  .ida-route-planner > #destination-candidate { grid-area: 3 / 4; }
+  .ida-route-planner > button:last-of-type { grid-area: 3 / 5; }
+}
