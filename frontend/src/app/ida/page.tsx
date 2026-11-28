@@ -425,10 +425,10 @@ export default function IdaPage() {
   }
 
   return (
-    <main style={{ padding: "24px" }}>
+    <main className="ida-dashboard">
       <h1>Ida incident reports</h1>
 
-      <section className="timeline-panel" aria-labelledby="ida-timeline-heading">
+      <section className="timeline-panel ida-replay-panel" aria-labelledby="ida-timeline-heading">
         <h2 id="ida-timeline-heading">Ida replay timeline</h2>
         <p>{formatReplayTime(asOfUtc)} · America/New_York</p>
 
@@ -474,7 +474,7 @@ export default function IdaPage() {
           Hour {frameIndex + 1} of {FRAME_COUNT}
         </p>
       </section>
-      <section aria-labelledby="route-planner-heading">
+      <section className="ida-route-planner" aria-labelledby="route-planner-heading">
         <h2 id="route-planner-heading">Route planner</h2>
 
         <button type="button" onClick={() => beginMapSelection("origin")}>
@@ -559,44 +559,50 @@ export default function IdaPage() {
       )}
 
       {activePage && (
-        <>
-          <p role="status">
-            Showing {activePage.incidents.length} of{" "}
-            {activePage.pagination.total.toLocaleString("en-US")} reports.
-          </p>
+        <div className="ida-workspace">
+          <div className="ida-map-column">
+            <section className="map-panel" aria-labelledby="ida-map-heading">
+              <h2 id="ida-map-heading">Ida incident map</h2>
+              <CityMapLoader
+                incidents={activePage.incidents}
+                selectedIncidentId={selectedIncidentId}
+                onSelect={handleIncidentSelect}
+                selectionRole={selectionRole}
+                onMapPointSelect={handleMapPointSelect}
+                routeResponse={routeResponse ?? undefined}
+              />
+            </section>
 
-          <IncidentList
-            incidents={activePage.incidents}
-            selectedIncidentId={selectedIncidentId}
-            displayTimezone={activePage.display_timezone}
-            onSelect={handleIncidentSelect}
-          />
+            {routeResponse && (
+              <RouteComparison
+                response={routeResponse}
+                onSelectIncident={handleWarningIncidentSelect}
+              />
+            )}
+          </div>
 
-          {activePage.pagination.next_offset !== null && (
-            <button type="button" onClick={loadMore} disabled={loadingMore}>
-              {loadingMore ? "Loading…" : "Load more reports"}
-            </button>
-          )}
+          <section className="ida-incidents-panel" aria-labelledby="ida-incidents-heading">
+            <h2 id="ida-incidents-heading">Incident reports</h2>
+            <p role="status">
+              Showing {activePage.incidents.length} of{" "}
+              {activePage.pagination.total.toLocaleString("en-US")} reports.
+            </p>
 
-          <section className="map-panel" aria-labelledby="ida-map-heading">
-            <h2 id="ida-map-heading">Ida incident map</h2>
-            <CityMapLoader
+            <IncidentList
               incidents={activePage.incidents}
               selectedIncidentId={selectedIncidentId}
+              displayTimezone={activePage.display_timezone}
               onSelect={handleIncidentSelect}
-              selectionRole={selectionRole}
-              onMapPointSelect={handleMapPointSelect}
-              routeResponse={routeResponse ?? undefined}
             />
-          </section>
-          {routeResponse && (
-            <RouteComparison
-              response={routeResponse}
-              onSelectIncident={handleWarningIncidentSelect}
-            />
-          )}
 
-          <section aria-labelledby="ida-report-details">
+            {activePage.pagination.next_offset !== null && (
+              <button type="button" onClick={loadMore} disabled={loadingMore}>
+                {loadingMore ? "Loading…" : "Load more reports"}
+              </button>
+            )}
+          </section>
+
+          <section className="ida-details-panel" aria-labelledby="ida-report-details">
             <h2 id="ida-report-details">Report details</h2>
             {incidentLookupLoading && (
               <p role="status">Loading the report linked to this warning…</p>
@@ -604,7 +610,7 @@ export default function IdaPage() {
             {incidentLookupError && <p role="alert">{incidentLookupError}</p>}
             <IncidentDetails incident={selectedIncident} />
           </section>
-        </>
+        </div>
       )}
     </main>
   );
