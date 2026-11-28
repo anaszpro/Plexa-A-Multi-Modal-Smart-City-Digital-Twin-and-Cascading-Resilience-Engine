@@ -36,6 +36,10 @@ function formatReplayTime(asOfUtc: string) {
   }).format(new Date(asOfUtc));
 }
 
+function roadKey(candidate: EndpointCandidate) {
+  return `${candidate.node_id}:${candidate.node_level}`;
+}
+
 async function fetchIncidents(
   asOfUtc: string,
   offset: number,
@@ -98,10 +102,20 @@ export default function IdaPage() {
   const candidateControllerRef = useRef<AbortController | null>(null);
   const routeControllerRef = useRef<AbortController | null>(null);
   const lookupControllerRef = useRef<AbortController | null>(null);
+  const chooseDestinationRef = useRef<HTMLButtonElement>(null);
+  const compareRoutesRef = useRef<HTMLButtonElement>(null);
+  const comparisonHeadingRef = useRef<HTMLHeadingElement>(null);
+  const reportHeadingRef = useRef<HTMLHeadingElement>(null);
+  const nextRouteControlRef = useRef<"destination" | "compare" | null>(null);
 
   const asOfUtc = getAsOfUtc(frameIndex);
   const activePage =
     page && Date.parse(page.as_of_utc) === Date.parse(asOfUtc) ? page : null;
+  const sameRoadPoint =
+    !!origin && !!destination && roadKey(origin) === roadKey(destination);
+  const canCompare =
+    !!activePage && !!origin && !!destination && !sameRoadPoint &&
+    !selectionRole && !candidateLoading && !routeLoading;
 
   const selectedIncident =
     activePage?.incidents.find(
@@ -130,6 +144,9 @@ export default function IdaPage() {
 
     clearIncidentLookup();
     setSelectedIncidentId(incidentId);
+
+    reportHeadingRef.current?.focus({ preventScroll: true });
+    reportHeadingRef.current?.scrollIntoView({ block: "start" });
 
     if (alreadyLoaded) return;
 
@@ -183,34 +200,27 @@ export default function IdaPage() {
   }, []);
 
   function beginMapSelection(role: MapSelectionRole) {
+    const nextRole = selectionRole === role ? null : role;
     candidateControllerRef.current?.abort();
     candidateControllerRef.current = null;
+    setPlaying(false);
     setCandidateLoading(false);
     setCandidateError(null);
-    setSelectionRole(role);
+    if (nextRole) clearRouteResult();
+    setSelectionRole(nextRole);
   }
 
   async function handleMapPointSelect(point: MapPoint) {
     const role = selectionRole;
-    if (!role) return;
+    if (!role || !activePage || candidateLoading) return;
 
     candidateControllerRef.current?.abort();
 
     const controller = new AbortController();
     candidateControllerRef.current = controller;
 
-    setSelectionRole(null);
     setCandidateLoading(true);
     setCandidateError(null);
-    clearRouteResult();
-
-    if (role === "origin") {
-      setOrigin(null);
-      setOriginCandidates([]);
-    } else {
-      setDestination(null);
-      setDestinationCandidates([]);
-    }
 
     try {
       const result = await fetchEndpointCandidates(
@@ -222,16 +232,29 @@ export default function IdaPage() {
 
       if (controller.signal.aborted) return;
 
-      if (result.candidates.length === 0) {
-        setCandidateError(`No road nodes found near the selected ${role}. Click another map location.`);
+      const [closest] = result.candidates;
+      if (!closest) {
+        setCandidateError("No nearby road found. Try another spot on the map.");
         return;
       }
 
+      const other = role === "origin" ? destination : origin;
+      if (other && roadKey(other) === roadKey(closest)) {
+        setCandidateError("That’s the same road point. Pick a spot farther away.");
+        return;
+      }
+
+      setSelectionRole(null);
       if (role === "origin") {
+        setOrigin(closest);
         setOriginCandidates(result.candidates);
       } else {
+        setDestination(closest);
         setDestinationCandidates(result.candidates);
       }
+      nextRouteControlRef.current = role === "origin" && !destination
+        ? "destination"
+        : "compare";
     } catch (requestError) {
       if (!controller.signal.aborted) {
         setCandidateError(
@@ -249,7 +272,7 @@ export default function IdaPage() {
   }
 
   async function compareRoutes() {
-    if (!origin || !destination) return;
+    if (!canCompare || !origin || !destination) return;
 
     routeControllerRef.current?.abort();
 
@@ -297,6 +320,7 @@ export default function IdaPage() {
   const resetRoutePlanner = useCallback(() => {
     candidateControllerRef.current?.abort();
     candidateControllerRef.current = null;
+    nextRouteControlRef.current = null;
     setSelectionRole(null);
     setOriginCandidates([]);
     setDestinationCandidates([]);
@@ -306,11 +330,28 @@ export default function IdaPage() {
     setCandidateError(null);
     clearRouteResult();
   }, [clearRouteResult]);
+
+  useEffect(() => {
+    const next = nextRouteControlRef.current;
+    if (candidateLoading || !next) return;
+    nextRouteControlRef.current = null;
+    const button = next === "destination" ? chooseDestinationRef : compareRoutesRef;
+    button.current?.focus();
+  }, [candidateLoading]);
+
+  useEffect(() => {
+    if (!routeResponse) return;
+    comparisonHeadingRef.current?.focus({ preventScroll: true });
+    comparisonHeadingRef.current?.scrollIntoView({ block: "nearest" });
+  }, [routeResponse]);
+
   function changeFrame(nextIndex: number) {
     const boundedIndex = Math.max(
       0,
       Math.min(LAST_FRAME_INDEX, nextIndex),
     );
+
+    if (boundedIndex === frameIndex) return;
 
     requestControllerRef.current?.abort();
     clearIncidentLookup();
@@ -424,31 +465,40 @@ export default function IdaPage() {
     }
   }
 
+  const endpointSteps = [
+    { role: "origin", label: "Start", selected: origin, candidates: originCandidates, other: destination },
+    { role: "destination", label: "Destination", selected: destination, candidates: destinationCandidates, other: origin },
+  ] as const;
+
   return (
-    <main style={{ padding: "24px" }}>
-      <h1>Ida incident reports</h1>
+    <main className="ida-dashboard">
+      <h1>Hurricane Ida replay</h1>
 
-      <section className="timeline-panel" aria-labelledby="ida-timeline-heading">
-        <h2 id="ida-timeline-heading">Ida replay timeline</h2>
-        <p>{formatReplayTime(asOfUtc)} · America/New_York</p>
+      <section className="timeline-panel ida-replay-panel" aria-labelledby="ida-timeline-heading">
+        <div className="ida-replay-time">
+          <h2 id="ida-timeline-heading">Replay timeline</h2>
+          <p>
+            <strong className="ida-replay-hour">Hour {frameIndex + 1} of {FRAME_COUNT}</strong>
+            {" · "}{formatReplayTime(asOfUtc)}
+          </p>
+        </div>
 
-        <div>
+        <div className="ida-replay-actions">
           <button
             type="button"
             onClick={() => changeFrame(frameIndex - 1)}
             disabled={frameIndex === 0}
           >
             Previous hour
-          </button>{" "}
+          </button>
           <button
             type="button"
-            onClick={() => {
-              setPlaying((currentlyPlaying) => !currentlyPlaying);
-            }}
+            aria-pressed={playing}
+            onClick={() => setPlaying((current) => !current)}
             disabled={frameIndex === LAST_FRAME_INDEX}
           >
             {playing ? "Pause" : "Play"}
-          </button>{" "}
+          </button>
           <button
             type="button"
             onClick={() => changeFrame(frameIndex + 1)}
@@ -458,7 +508,7 @@ export default function IdaPage() {
           </button>
         </div>
 
-        <label htmlFor="ida-replay-hour">Replay hour</label>
+        <label className="sr-only" htmlFor="ida-replay-hour">Replay hour</label>
         <input
           id="ida-replay-hour"
           type="range"
@@ -467,144 +517,170 @@ export default function IdaPage() {
           step={1}
           value={frameIndex}
           onChange={(event) => changeFrame(Number(event.currentTarget.value))}
-          aria-valuetext={`Hour ${frameIndex + 1} of ${FRAME_COUNT}: ${formatReplayTime(asOfUtc)}`}
+          aria-valuetext={"Hour " + (frameIndex + 1) + " of " + FRAME_COUNT + ": " + formatReplayTime(asOfUtc)}
         />
-
-        <p>
-          Hour {frameIndex + 1} of {FRAME_COUNT}
-        </p>
-      </section>
-      <section aria-labelledby="route-planner-heading">
-        <h2 id="route-planner-heading">Route planner</h2>
-
-        <button type="button" onClick={() => beginMapSelection("origin")}>
-          Choose origin on map
-        </button>{" "}
-        <button type="button" onClick={() => beginMapSelection("destination")}>
-          Choose destination on map
-        </button>
-
-        {selectionRole && (
-          <p role="status">Click the map to set the {selectionRole}.</p>
-        )}
-        {candidateLoading && <p role="status">Finding nearby road nodes…</p>}
-        {candidateError && <p role="alert">{candidateError}</p>}
-
-        <label htmlFor="origin-candidate">Origin road node</label>
-        <select
-          id="origin-candidate"
-          value={origin ? `${origin.node_id}:${origin.node_level}` : ""}
-          onChange={(event) => {
-            const key = event.currentTarget.value;
-            setOrigin(
-              originCandidates.find(
-                (candidate) => `${candidate.node_id}:${candidate.node_level}` === key,
-              ) ?? null,
-            );
-            clearRouteResult();
-          }}
-        >
-          <option value="">Choose an origin</option>
-          {originCandidates.map((candidate) => (
-            <option
-              key={`${candidate.node_id}:${candidate.node_level}`}
-              value={`${candidate.node_id}:${candidate.node_level}`}
-            >
-              {candidate.node_id} ({candidate.node_level}) —{" "}
-              {candidate.distance_from_pin_m.toFixed(1)} m from click
-            </option>
-          ))}
-        </select>
-
-        <label htmlFor="destination-candidate">Destination road node</label>
-        <select
-          id="destination-candidate"
-          value={destination ? `${destination.node_id}:${destination.node_level}` : ""}
-          onChange={(event) => {
-            const key = event.currentTarget.value;
-            setDestination(
-              destinationCandidates.find(
-                (candidate) => `${candidate.node_id}:${candidate.node_level}` === key,
-              ) ?? null,
-            );
-            clearRouteResult();
-          }}
-        >
-          <option value="">Choose a destination</option>
-          {destinationCandidates.map((candidate) => (
-            <option
-              key={`${candidate.node_id}:${candidate.node_level}`}
-              value={`${candidate.node_id}:${candidate.node_level}`}
-            >
-              {candidate.node_id} ({candidate.node_level}) —{" "}
-              {candidate.distance_from_pin_m.toFixed(1)} m from click
-            </option>
-          ))}
-        </select>
-
-        <button
-          type="button"
-          onClick={compareRoutes}
-          disabled={!origin || !destination || candidateLoading || routeLoading}
-        >
-          {routeLoading ? "Comparing routes…" : "Compare routes"}
-        </button>
-
-        {routeError && <p role="alert">{routeError}</p>}
       </section>
 
-      {error && <p role="alert">{error}</p>}
-      {!error && !activePage && (
-        <p role="status">Loading incident reports for this hour…</p>
-      )}
+      <div className="ida-route-workspace">
+        <section className="ida-route-planner" aria-labelledby="ida-route-planner-heading">
+          <h2 id="ida-route-planner-heading">Plan a route</h2>
+          <p>Pick two spots on the map. Each pin snaps to the nearest road point.</p>
+          <ol className="ida-route-steps" aria-label="Route planning steps">
+            {endpointSteps.map(({ role, label, selected }, index) => (
+              <li key={role}>
+                <button
+                  ref={role === "destination" ? chooseDestinationRef : undefined}
+                  type="button"
+                  aria-pressed={selectionRole === role}
+                  aria-controls="ida-map"
+                  data-next={
+                    !selectionRole &&
+                    (role === "origin" ? !origin : !!origin && !destination)
+                  }
+                  disabled={!activePage || candidateLoading || (role === "destination" && !origin)}
+                  onClick={() => beginMapSelection(role)}
+                >
+                  <span className="ida-step-number" aria-hidden="true">{index + 1}</span>
+                  Choose {label.toLowerCase()}
+                </button>
+                {selected && selectionRole !== role && (
+                  <p className="ida-step-status">{label} set</p>
+                )}
+              </li>
+            ))}
+            <li>
+              <button
+                ref={compareRoutesRef}
+                type="button"
+                disabled={!canCompare}
+                onClick={compareRoutes}
+              >
+                <span className="ida-step-number" aria-hidden="true">3</span>
+                {routeLoading ? "Comparing routes…" : "Compare routes"}
+              </button>
+            </li>
+          </ol>
+          {routeLoading && <p role="status">Comparing routes for this replay hour…</p>}
+          {routeError && <p role="alert">{routeError}</p>}
 
-      {activePage && (
-        <>
-          <p role="status">
-            Showing {activePage.incidents.length} of{" "}
-            {activePage.pagination.total.toLocaleString("en-US")} reports.
-          </p>
+          {endpointSteps.some(({ candidates }) => candidates.length > 1) && (
+            <details className="ida-road-options">
+              <summary>Adjust nearby road points</summary>
+              {endpointSteps.map(({ role, label, selected, candidates, other }) => (
+                candidates.length > 1 && selected && (
+                  <label key={role}>
+                    {label} road point
+                    <select
+                      value={roadKey(selected)}
+                      disabled={candidateLoading || !!selectionRole}
+                      onChange={(event) => {
+                        const candidate = candidates.find(
+                          (item) => roadKey(item) === event.currentTarget.value,
+                        );
+                        if (!candidate) return;
 
-          <IncidentList
-            incidents={activePage.incidents}
-            selectedIncidentId={selectedIncidentId}
-            displayTimezone={activePage.display_timezone}
-            onSelect={handleIncidentSelect}
-          />
+                        if (role === "origin") setOrigin(candidate);
+                        else setDestination(candidate);
 
-          {activePage.pagination.next_offset !== null && (
-            <button type="button" onClick={loadMore} disabled={loadingMore}>
-              {loadingMore ? "Loading…" : "Load more reports"}
-            </button>
+                        clearRouteResult();
+                      }}
+                    >
+                      {candidates.map((candidate, index) => (
+                        <option
+                          key={roadKey(candidate)}
+                          value={roadKey(candidate)}
+                          disabled={!!other && roadKey(other) === roadKey(candidate)}
+                        >
+                          {index === 0 ? "Closest" : "Option " + (index + 1)} ·{" "}
+                          {candidate.distance_from_pin_m.toFixed(1)} m from pin
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )
+              ))}
+            </details>
           )}
+        </section>
 
-          <section className="map-panel" aria-labelledby="ida-map-heading">
-            <h2 id="ida-map-heading">Ida incident map</h2>
+        <div className="ida-map-column">
+          <section
+            id="ida-map"
+            className={selectionRole ? "map-panel ida-map-picking" : "map-panel"}
+            aria-labelledby="ida-map-heading"
+          >
+            <div className="ida-map-heading">
+              <h2 id="ida-map-heading">Incident map</h2>
+              {selectionRole && (
+                <p role="status">
+                  {candidateLoading
+                    ? "Finding the nearest road point…"
+                    : "Select a road for your " +
+                      (selectionRole === "origin" ? "start" : "destination") +
+                      ". Use the map crosshair and Enter if you’re using a keyboard."}
+                </p>
+              )}
+              {candidateError && <p role="alert">{candidateError}</p>}
+              {error && !activePage && <p role="alert">{error}</p>}
+              {!error && !activePage && <p role="status">Loading reports for this hour…</p>}
+            </div>
             <CityMapLoader
-              incidents={activePage.incidents}
+              incidents={activePage?.incidents ?? []}
               selectedIncidentId={selectedIncidentId}
               onSelect={handleIncidentSelect}
               selectionRole={selectionRole}
               onMapPointSelect={handleMapPointSelect}
+              draftStart={origin}
+              draftDestination={destination}
               routeResponse={routeResponse ?? undefined}
             />
           </section>
+
           {routeResponse && (
             <RouteComparison
+              headingRef={comparisonHeadingRef}
               response={routeResponse}
               onSelectIncident={handleWarningIncidentSelect}
             />
           )}
+        </div>
+      </div>
 
-          <section aria-labelledby="ida-report-details">
-            <h2 id="ida-report-details">Report details</h2>
-            {incidentLookupLoading && (
-              <p role="status">Loading the report linked to this warning…</p>
+      {activePage && (
+        <div className="ida-report-workspace">
+          <section className="ida-incidents-panel" aria-labelledby="ida-incidents-heading">
+            <h2 id="ida-incidents-heading">Incident reports</h2>
+            <p role="status">
+              Showing {activePage.incidents.length} of{" "}
+              {activePage.pagination.total.toLocaleString("en-US")} reports.
+            </p>
+
+            <IncidentList
+              incidents={activePage.incidents}
+              selectedIncidentId={selectedIncidentId}
+              displayTimezone={activePage.display_timezone}
+              onSelect={handleIncidentSelect}
+            />
+
+            {error && <p role="alert">{error}</p>}
+            {activePage.pagination.next_offset !== null && (
+              <button type="button" onClick={loadMore} disabled={loadingMore}>
+                {loadingMore ? "Loading…" : "Load more reports"}
+              </button>
             )}
-            {incidentLookupError && <p role="alert">{incidentLookupError}</p>}
-            <IncidentDetails incident={selectedIncident} />
           </section>
-        </>
+
+          <section className="ida-details-panel" aria-labelledby="ida-report-details">
+            <h2 ref={reportHeadingRef} id="ida-report-details" tabIndex={-1}>Report details</h2>
+            {incidentLookupLoading ? (
+              <p role="status">Loading the linked report…</p>
+            ) : incidentLookupError ? (
+              <p role="alert">{incidentLookupError}</p>
+            ) : (
+              <IncidentDetails incident={selectedIncident} />
+            )}
+          </section>
+        </div>
       )}
     </main>
   );
