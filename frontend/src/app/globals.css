@@ -766,3 +766,233 @@ h2 {
   color: var(--muted);
   font-size: 13px;
 }
+
+/* Ida replay */
+
+.ida-dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  max-width: 1520px;
+  margin-inline: auto;
+  padding: clamp(12px, 2vw, 28px);
+}
+
+.ida-dashboard > h1 {
+  font-size: clamp(24px, 2.5vw, 32px);
+  font-weight: 700;
+}
+
+.ida-replay-panel {
+  justify-content: flex-start;
+  gap: 10px 16px;
+  padding: 14px;
+}
+
+.ida-replay-hour {
+  color: var(--foreground);
+}
+
+.ida-replay-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ida-replay-panel input[type="range"] {
+  flex: 1 1 160px;
+  min-width: 0;
+  max-width: 360px;
+  min-height: 32px;
+  accent-color: var(--accent);
+}
+
+.ida-route-workspace,
+.ida-map-column,
+.ida-report-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+  min-width: 0;
+}
+
+.ida-route-planner,
+.ida-incidents-panel,
+.ida-details-panel,
+.ida-map-column .route-comparison {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.ida-route-planner > p,
+.ida-incidents-panel > p,
+.ida-details-panel > p,
+.ida-map-heading > p {
+  margin-top: 6px;
+  color: var(--muted);
+}
+
+.ida-dashboard [role="alert"] {
+  color: #9f241d;
+}
+
+.ida-route-steps {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ida-route-steps button,
+.ida-replay-actions button,
+.ida-incidents-panel > button,
+.ida-road-options select {
+  min-width: 0;
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 1px solid #8795a8;
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--foreground);
+  font: inherit;
+}
+
+.ida-route-steps button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  font-weight: 600;
+}
+
+.ida-step-number {
+  display: grid;
+  flex: 0 0 24px;
+  place-items: center;
+  min-height: 24px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 12px;
+}
+
+.ida-step-status {
+  margin: 4px 0 0 10px;
+  color: #365a48;
+  font-size: 13px;
+}
+
+.ida-route-steps button[data-next="true"]:not(:disabled),
+.ida-route-steps button[aria-pressed="true"],
+.ida-route-steps li:last-child button:not(:disabled),
+.ida-replay-actions button:nth-child(2):not(:disabled) {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.ida-dashboard button:not(:disabled),
+.ida-road-options summary {
+  cursor: pointer;
+}
+
+.ida-dashboard button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ida-road-options {
+  margin-top: 14px;
+  font-size: 13px;
+}
+
+.ida-road-options label {
+  display: grid;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.ida-road-options select {
+  width: 100%;
+}
+
+.ida-map-heading {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ida-map-column .city-map,
+.ida-map-column .map-placeholder {
+  min-height: clamp(310px, 48vh, 520px);
+}
+
+.ida-map-picking .city-map {
+  cursor: crosshair;
+}
+
+.ida-map-picking .leaflet-overlay-pane .leaflet-interactive {
+  pointer-events: none;
+}
+
+.ida-map-picking .city-map:focus-visible::after {
+  position: absolute;
+  z-index: 500;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #172335;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #fff;
+  content: "";
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.ida-map-column .route-alternatives {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+}
+
+.ida-map-column .route-comparison h2,
+.ida-details-panel > h2 {
+  scroll-margin-block-start: 16px;
+}
+
+.ida-incidents-panel .incident-list {
+  margin-top: 8px;
+}
+
+.ida-incidents-panel > button {
+  width: 100%;
+  margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+  .ida-replay-time,
+  .ida-replay-actions {
+    flex-basis: 100%;
+  }
+
+  .ida-replay-actions button {
+    flex: 1 1 auto;
+  }
+
+  .ida-replay-panel input[type="range"] {
+    max-width: none;
+  }
+}
+
+@media (min-width: 860px) {
+  .ida-route-workspace {
+    grid-template-columns: minmax(230px, 280px) minmax(0, 1fr);
+  }
+
+  .ida-report-workspace {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

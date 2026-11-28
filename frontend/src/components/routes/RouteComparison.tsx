@@ -1,10 +1,12 @@
 "use client";
 
+import type { Ref } from "react";
 import type { RouteResponse } from "@/lib/routes/schema";
 
 interface RouteComparisonProps {
   response: RouteResponse;
   onSelectIncident: (incidentId: string) => void;
+  headingRef?: Ref<HTMLHeadingElement>;
 }
 
 function formatNumber(value: number) {
@@ -16,6 +18,7 @@ function formatNumber(value: number) {
 export default function RouteComparison({
   response,
   onSelectIncident,
+  headingRef,
 }: RouteComparisonProps) {
   if (!response.route_found) {
     return (
@@ -23,7 +26,9 @@ export default function RouteComparison({
         className="route-comparison"
         aria-labelledby="routes-heading"
       >
-        <h2 id="routes-heading">Route comparison</h2>
+        <h2 id="routes-heading" ref={headingRef} tabIndex={headingRef ? -1 : undefined}>
+          Route comparison
+        </h2>
         <p role="status">
           No route found between the selected endpoints.
         </p>
@@ -49,7 +54,9 @@ export default function RouteComparison({
       className="route-comparison"
       aria-labelledby="routes-heading"
     >
-      <h2 id="routes-heading">Route comparison</h2>
+      <h2 id="routes-heading" ref={headingRef} tabIndex={headingRef ? -1 : undefined}>
+        Route comparison
+      </h2>
 
       <p>
         {response.changed_from_shortest

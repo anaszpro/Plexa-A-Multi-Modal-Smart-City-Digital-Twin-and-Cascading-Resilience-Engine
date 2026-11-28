@@ -8,11 +8,10 @@ import {
   Polyline,
   TileLayer,
   Tooltip,
-  useMap,
   useMapEvents,
 } from "react-leaflet";
 import type { Route, RouteResponse } from "@/lib/routes/schema";
-import type { CityMapProps } from "./types";
+import type { CityMapProps, MapPoint } from "./types";
 import "leaflet/dist/leaflet.css";
 
 function markerAppearance(incident: CityMapProps["incidents"][number]) {
@@ -81,8 +80,40 @@ function fitRoutes(map: LeafletMap, response: RouteResponse) {
   });
 }
 
+function RouteEndpointMarker({
+  point,
+  label,
+}: {
+  point: MapPoint;
+  label: "Start" | "Destination";
+}) {
+  const isStart = label === "Start";
+  return (
+    <CircleMarker
+      center={[point.latitude, point.longitude]}
+      radius={isStart ? 14 : 11}
+      interactive={false}
+      pathOptions={{
+        color: "#172335",
+        weight: 3,
+        fill: !isStart,
+        fillColor: "#ffffff",
+        fillOpacity: 1,
+      }}
+    >
+      <Tooltip permanent direction="top" offset={[0, isStart ? -16 : -13]}>
+        {label}
+      </Tooltip>
+    </CircleMarker>
+  );
+}
+
 function RouteLayers({ response }: { response: RouteResponse }) {
-  const map = useMap();
+  const map = useMapEvents({
+    resize() {
+      fitRoutes(map, response);
+    },
+  });
 
   useEffect(() => {
     fitRoutes(map, response);
@@ -134,53 +165,45 @@ function RouteLayers({ response }: { response: RouteResponse }) {
         )
       )}
 
-      <CircleMarker
-        center={[response.origin.latitude, response.origin.longitude]}
-        radius={16}
-        pathOptions={{
-          color: "#172335",
-          weight: 3,
-          fill: false,
-        }}
-      >
-        <Tooltip permanent direction="top" offset={[0, -18]}>
-          Origin
-        </Tooltip>
-      </CircleMarker>
-
-      <CircleMarker
-        center={[
-          response.destination.latitude,
-          response.destination.longitude,
-        ]}
-        radius={12}
-        pathOptions={{
-          color: "#172335",
-          weight: 3,
-          fillColor: "#ffffff",
-          fillOpacity: 1,
-        }}
-      >
-        <Tooltip permanent direction="top" offset={[0, -14]}>
-          Destination
-        </Tooltip>
-      </CircleMarker>
+      <RouteEndpointMarker point={response.origin} label="Start" />
+      <RouteEndpointMarker point={response.destination} label="Destination" />
     </>
   );
 }
-function MapClickHandler({
+function MapPointPicker({
   onMapPointSelect,
 }: {
   onMapPointSelect: NonNullable<CityMapProps["onMapPointSelect"]>;
 }) {
-  useMapEvents({
+  const map = useMapEvents({
     click(event) {
       onMapPointSelect({
         latitude: event.latlng.lat,
         longitude: event.latlng.lng,
       });
     },
+    keydown(event) {
+      const keyEvent = event.originalEvent;
+      if (keyEvent.key !== "Enter" || keyEvent.target !== map.getContainer()) return;
+      keyEvent.preventDefault();
+      const center = map.getCenter();
+      onMapPointSelect({ latitude: center.lat, longitude: center.lng });
+    },
   });
+
+  useEffect(() => {
+    const container = map.getContainer();
+    const previousLabel = container.getAttribute("aria-label");
+    container.setAttribute(
+      "aria-label",
+      "Choose a road point. Move the map with arrow keys, then press Enter to select the crosshair.",
+    );
+    container.focus();
+    return () => {
+      if (previousLabel === null) container.removeAttribute("aria-label");
+      else container.setAttribute("aria-label", previousLabel);
+    };
+  }, [map]);
 
   return null;
 }
@@ -190,6 +213,8 @@ export default function CityMap({
   selectedIncidentId,
   onSelect,
   routeResponse,
+  draftStart,
+  draftDestination,
   selectionRole,
   onMapPointSelect,
 }: CityMapProps) {
@@ -248,7 +273,7 @@ export default function CityMap({
                 }
               }}
             >
-              Show routes
+              Fit routes to map
             </button>
           )}
 
@@ -285,9 +310,15 @@ export default function CityMap({
         />
 
         {selectionRole && onMapPointSelect && (
-          <MapClickHandler onMapPointSelect={onMapPointSelect} />
+          <MapPointPicker onMapPointSelect={onMapPointSelect} />
         )}
 
+        {!routeResponse?.route_found && draftStart && (
+          <RouteEndpointMarker point={draftStart} label="Start" />
+        )}
+        {!routeResponse?.route_found && draftDestination && (
+          <RouteEndpointMarker point={draftDestination} label="Destination" />
+        )}
         {routeResponse && <RouteLayers response={routeResponse} />}
 
 

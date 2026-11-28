@@ -14,6 +14,8 @@ export interface CityMapProps {
   selectedIncidentId: string | null;
   onSelect: (incidentId: string) => void;
   routeResponse?: RouteResponse;
+  draftStart?: MapPoint | null;
+  draftDestination?: MapPoint | null;
   selectionRole?: MapSelectionRole | null;
   onMapPointSelect?: (point: MapPoint) => void;
 }
